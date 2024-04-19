@@ -5,7 +5,7 @@ using Ramada.Domain.Entities.Users;
 
 namespace Ramada.Domain.Entities.Customers;
 
-public class Custmoer : Auditable
+public class Customer : Auditable
 {
     public long UserId { get; set; }
     public User User { get; set; }
