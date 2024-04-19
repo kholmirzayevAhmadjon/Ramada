@@ -1,6 +1,4 @@
-﻿using System.Security.AccessControl;
-
-namespace Ramada.Service.DTOs.Assets;
+﻿namespace Ramada.Service.DTOs.Assets;
 
 public class AssetCreateModel
 {

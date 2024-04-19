@@ -8,7 +8,7 @@ namespace Ramada.Domain.Entities.Bookings;
 public class Booking : Auditable
 {
     public long CustomerId { get; set; }
-    public Custmoer Custmoer { get; set; }
+    public Customer Customer { get; set; }
     public int NumberOfPeople { get; set; }
     public DateTime StartDate { get; set; }
     public int NumberOfDays { get; set; }
