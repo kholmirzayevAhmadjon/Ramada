@@ -3,9 +3,9 @@
   
 ***
 ### Branch Rules
-- Always rebase from `main` branch
+- Always rebase from `main/master` branch
 - Your new feature branch name should follow the rule `your_name/changes-summary`. *Ex: `makhammadsoliyev/add-user-service`*
-- Allways create A PR to `main` branch
+- Allways create A PR to `main/master` branch
 
 ### PR rules
 - PR title should follow the rule `changes small summary`. *Ex: `Create UserService`*
