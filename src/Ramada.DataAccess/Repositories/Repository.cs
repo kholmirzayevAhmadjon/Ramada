@@ -7,12 +7,12 @@ namespace Ramada.DataAccess.Repositories;
 
 public class Repository<T> : IRepository<T> where T : Auditable
 {
-    private readonly AppDbContext context;
+    private readonly AppDbContext _context;
     private readonly DbSet<T> set;
     public Repository(AppDbContext context)
     {
-        this.context = context;
-        this.set = context.Set<T>();
+        this._context = context;
+        this.set = _context.Set<T>();
     }
 
     public async ValueTask<T> InsertAsync(T entity)
