@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ramada.DataAccess\Ramada.DataAccess.csproj" />
     <ProjectReference Include="..\Ramada.Service\Ramada.Service.csproj" />
   </ItemGroup>
 
