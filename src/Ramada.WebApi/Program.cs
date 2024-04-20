@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.Contexts;
+using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
