@@ -13,6 +13,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

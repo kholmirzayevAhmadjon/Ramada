@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ramada.DataAccess\Ramada.DataAccess.csproj" />
     <ProjectReference Include="..\Ramada.Domain\Ramada.Domain.csproj" />
   </ItemGroup>
 
