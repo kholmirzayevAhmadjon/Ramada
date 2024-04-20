@@ -27,8 +27,8 @@ public static class CollectionExtensions
             throw new ArgumentIsNotValidException("Specified Property Is Not Found");
         }
 
-        var method = string.Equals(filter?.OrderType 
-                                    ?? "asc", "desc", StringComparison.OrdinalIgnoreCase) 
+        var method = string.Equals(filter?.OrderType
+                                    ?? "asc", "desc", StringComparison.OrdinalIgnoreCase)
                                 ? "OrderByDescending" : "OrderBy";
 
         expression = Expression.Call(typeof(Queryable),

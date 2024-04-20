@@ -15,7 +15,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly AppDbContext _context;
     public IRepository<User> Users { get; }
     public IRepository<Role> Roles { get; }
-    public IRepository<Asset> Assets { get; }   
+    public IRepository<Asset> Assets { get; }
     public IRepository<Room> Rooms { get; }
     public IRepository<Hostel> Hostels { get; }
     public IRepository<Payment> Payments { get; }
@@ -55,6 +55,6 @@ public class UnitOfWork : IUnitOfWork
 
     public async ValueTask<bool> SaveAsync()
     {
-        return await _context.SaveChangesAsync()>0;
+        return await _context.SaveChangesAsync() > 0;
     }
 }
