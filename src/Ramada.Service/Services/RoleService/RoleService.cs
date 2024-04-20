@@ -79,7 +79,6 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         if (!string.IsNullOrEmpty(search))
             roles = roles.Where(role => role.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
 
-        var result = await roles.ToPaginate(@params).ToListAsync();
-        return mapper.Map<IEnumerable<RoleViewModel>>(result);
+        return await Task.FromResult(mapper.Map<IEnumerable<RoleViewModel>>(roles.ToPaginate(@params)));
     }
 }
