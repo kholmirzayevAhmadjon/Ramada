@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Users;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Roles;
 using Ramada.Service.Exceptions;
+using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 
 namespace Ramada.Service.Services.RoleService;
@@ -41,9 +43,26 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return true;
     }
 
-    public ValueTask<RoleViewModel> Update(long id, RoleUpdateeModel model)
+    public async ValueTask<RoleViewModel> Update(long id, RoleUpdateeModel model)
     {
-        throw new NotImplementedException();
+        var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)
+            ?? throw new NotFoundException("This role is not found");
+
+        var existRoles = await unitOfWork.Roles.SelectAsync(expression: role => role.Name.ToLower() == model.Name.ToLower());
+        if(existRoles is not null)
+        {
+            throw new AlreadyExistException("This role already exists");
+        }
+        if(!existRoles.IsDeleted)
+        {
+            existRoles.IsDeleted = false;
+        }
+        existRoles.Name = model.Name;
+        existRoles.UpdatedByUserId = HttpContextHelper.UserId;
+        existRoles.UpdatedAt = DateTime.UtcNow;
+        await unitOfWork.Roles.UpdateAsync(existRoles);
+        await unitOfWork.SaveAsync();
+        return mapper.Map<RoleViewModel>(existRoles);
     }
    
     public async ValueTask<RoleViewModel> GetById(long id)
@@ -54,9 +73,13 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return mapper.Map<RoleViewModel>(role);
     }
 
-    public ValueTask<IEnumerable<RoleViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<RoleViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
     {
-        throw new NotImplementedException();
-    }
+        var roles = unitOfWork.Roles.SelectAsQueryable().OrderBy(filter);
+        if (!string.IsNullOrEmpty(search))
+            roles = roles.Where(role => role.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
 
+        var result = await roles.ToPaginate(@params).ToListAsync();
+        return mapper.Map<IEnumerable<RoleViewModel>>(result);
+    }
 }
