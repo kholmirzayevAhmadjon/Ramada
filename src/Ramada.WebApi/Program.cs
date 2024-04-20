@@ -1,4 +1,4 @@
-
+using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +9,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();
+
+EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
 var app = builder.Build();
 
