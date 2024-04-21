@@ -15,6 +15,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<JwtOption>(builder.Configuration);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
 var app = builder.Build();

@@ -8,8 +8,8 @@ public class RoomCreateModel
     public decimal Price { get; set; }
     public RoomStatus Status { get; set; }
     public int RoomNumber { get; set; }
-    public string Descreption { get; set; }
+    public string Description { get; set; }
     public int Floor { get; set; }
-    public int Size { get; set; }
+    public string Size { get; set; }
     public int MaxPeopleSize { get; set; }
 }
