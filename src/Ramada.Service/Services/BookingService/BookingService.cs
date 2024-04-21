@@ -10,7 +10,7 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 
-namespace Ramada.Service.Service.BookingService;
+namespace Ramada.Service.Services.BookingService;
 
 public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingService
 {
@@ -34,7 +34,9 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
 
         existRoom.Status = Domain.Enums.RoomStatus.Busy;
 
+        var res = unitOfWork.Bookings.InsertAsync(booking);
         var view = mapper.Map<BookingViewModel>(booking);
+        await unitOfWork.SaveAsync();
         view.Customer = mapper.Map<CustomerViewModel>(existCustomer);
         view.Room = mapper.Map<RoomViewModel>(existRoom);
 
@@ -45,7 +47,7 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
     {
         var existBooking = await unitOfWork.Bookings.SelectAsync(c => c.Id == id && !c.IsDeleted)
             ?? throw new NotFoundException($"Booking with this iD is not found ={id}");
-        
+
         existBooking.DeletedByUserId = HttpContextHelper.UserId;
         await unitOfWork.Bookings.DeleteAsync(existBooking);
         await unitOfWork.SaveAsync();
@@ -90,16 +92,18 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
     {
         var existBooking = await unitOfWork.Bookings.SelectAsync(b => b.Id == id)
             ?? throw new NotFoundException($"Booking with this Id is not found {id}");
-        
+
         existBooking.Id = id;
-        existBooking.UpdatedAt= DateTime.UtcNow;
+        existBooking.UpdatedAt = DateTime.UtcNow;
         existBooking.Status = bookingUpdateModel.Status;
-        existBooking.RoomId  = bookingUpdateModel.RoomId;
+        existBooking.RoomId = bookingUpdateModel.RoomId;
         existBooking.StartDate = bookingUpdateModel.StartDate;
         existBooking.UpdatedByUserId = HttpContextHelper.UserId;
         existBooking.NumberOfDays = bookingUpdateModel.NumberOfDays;
         existBooking.NumberOfPeople = bookingUpdateModel.NumberOfPeople;
 
+        await unitOfWork.Bookings.UpdateAsync(existBooking);
+        await unitOfWork.SaveAsync();
         return mapper.Map<BookingViewModel>(existBooking);
     }
 }
