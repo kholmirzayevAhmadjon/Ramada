@@ -51,7 +51,7 @@ public class CustomerService(IUnitOfWork unitOfWork,
                                                                        Filter filter,
                                                                        string search = null)
     {
-        var customers = unitOfWork.Customers.SelectAsQueryable(c => !c.IsDeleted, ["Bookings", "User", "Asset"], false);
+        var customers = unitOfWork.Customers.SelectAsQueryable(c => !c.IsDeleted, ["Bookings", "User", "Asset"], false).OrderBy(filter);
 
         if (!string.IsNullOrWhiteSpace(search))
             customers = customers.Where(c =>
