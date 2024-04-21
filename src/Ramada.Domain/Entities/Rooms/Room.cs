@@ -15,7 +15,6 @@ public class Room : Auditable
     public string Description { get; set; }
     public int Floor { get; set; }
     public string Size { get; set; }
-    public long AssetId { get; set; }
     public int MaxPeopleSize { get; set; }
     public IEnumerable<RoomFacility> Facilities { get; set; }
     public IEnumerable<RoomAsset> Assets { get; set; }
