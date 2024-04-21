@@ -6,5 +6,5 @@ public class HostelUpdateModel
     public string Name { get; set; }
     public string Description { get; set; }
     public long? AssetId { get; set; }
-    public long AdressId { get; set; }
+    public long AddressId { get; set; }
 }
