@@ -13,7 +13,7 @@ public class Hostel : Auditable
     public string Description { get; set; }
     public long? AssetId { get; set; }
     public Asset Asset { get; set; }
-    public long AdressId { get; set; }
+    public long AddressId { get; set; }
     public Address Address { get; set; }
     public IEnumerable<Room> Rooms { get; set; }
 }
