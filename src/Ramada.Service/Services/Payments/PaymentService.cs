@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
-using Ramada.Domain.Entities.Bookings;
 using Ramada.Domain.Entities.Payments;
+using Ramada.Domain.Enums;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Payments;
 using Ramada.Service.Exceptions;
@@ -20,7 +20,7 @@ public class PaymentService(IUnitOfWork unitOfWork, IMapper mapper) : IPaymentSe
             ?? throw new NotFoundException($"booking with this Id is not found {createModel.BookingId}");
 
         payment.TotalPrice = booking.Room.Price;
-        booking.Status = Domain.Enums.BookingStatus.Completed;
+        booking.Status = BookingStatus.Completed;
 
         var res = unitOfWork.Payments.InsertAsync(payment);
         await unitOfWork.SaveAsync();
