@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Ramada.Domain\Ramada.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
 </Project>
