@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Users;
 using Ramada.Service.Configurations;
@@ -14,10 +13,10 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
 {
     public async ValueTask<RoleViewModel> Create(RoleCreateModel model)
     {
-        var role = await unitOfWork.Roles.SelectAsync(r => r.Name.ToLower() == model.Name.ToLower() );
+        var role = await unitOfWork.Roles.SelectAsync(r => r.Name.ToLower() == model.Name.ToLower());
         if (role is not null)
         {
-            if(!role.IsDeleted)
+            if (!role.IsDeleted)
             {
                 await Update(role.Id, mapper.Map<RoleUpdateeModel>(role));
             }
@@ -49,11 +48,11 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
             ?? throw new NotFoundException("This role is not found");
 
         var existRoles = await unitOfWork.Roles.SelectAsync(expression: role => role.Name.ToLower() == model.Name.ToLower());
-        if(existRoles is not null)
+        if (existRoles is not null)
         {
             throw new AlreadyExistException("This role already exists");
         }
-        if(!existRoles.IsDeleted)
+        if (!existRoles.IsDeleted)
         {
             existRoles.IsDeleted = false;
         }
@@ -64,7 +63,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         await unitOfWork.SaveAsync();
         return mapper.Map<RoleViewModel>(existRoles);
     }
-   
+
     public async ValueTask<RoleViewModel> GetById(long id)
     {
         var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)

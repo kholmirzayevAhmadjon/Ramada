@@ -19,7 +19,7 @@ public class UserService(IUnitOfWork unitOfWork,
     public async ValueTask<UserViewModel> CreateAsync(UserCreateModel user)
     {
         var existUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
-            && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase) 
+            && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
                        || u.Phone.Equals(user.Phone)));
 
         if (existUser is not null)
@@ -82,7 +82,7 @@ public class UserService(IUnitOfWork unitOfWork,
         var token = authService.GenerateToken(user);
         var mappedUser = mapper.Map<UserViewModel>(user);
 
-        return new LogInViewModel() { User = mappedUser, Token = token };   
+        return new LogInViewModel() { User = mappedUser, Token = token };
     }
 
     public async ValueTask<UserViewModel> UpdateAsync(long id, UserUpdateModel user)

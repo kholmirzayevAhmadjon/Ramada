@@ -3,7 +3,6 @@ using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Rooms;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Facilities;
-using Ramada.Service.DTOs.Roles;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
