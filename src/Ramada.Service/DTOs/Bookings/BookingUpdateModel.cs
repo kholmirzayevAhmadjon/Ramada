@@ -5,7 +5,7 @@ namespace Ramada.Service.DTOs.Bookings;
 
 public class BookingUpdateModel
 {
-    public long Id { get; set; }
+    public long CustomerId { get; set; }
     public long RoomId { get; set; }
     public int NumberOfPeople { get; set; }
     public DateTime StartDate { get; set; }
