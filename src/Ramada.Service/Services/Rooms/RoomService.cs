@@ -62,7 +62,7 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
         existRoom.UpdatedByUserId = HttpContextHelper.UserId;
 
         await unitOfWork.Rooms.UpdateAsync(existRoom);
-        await unitOfWork.SaveAsync();   
+        await unitOfWork.SaveAsync();
         return mapper.Map<RoomViewModel>(existRoom);
     }
 }

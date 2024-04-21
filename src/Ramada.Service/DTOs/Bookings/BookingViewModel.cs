@@ -1,5 +1,4 @@
-﻿using Ramada.Domain.Entities.Rooms;
-using Ramada.Domain.Enums;
+﻿using Ramada.Domain.Enums;
 using Ramada.Service.DTOs.Customers;
 using Ramada.Service.DTOs.Payments;
 using Ramada.Service.DTOs.Rooms;

@@ -1,5 +1,4 @@
-﻿using Ramada.Domain.Entities.Rooms;
-using Ramada.Domain.Enums;
+﻿using Ramada.Domain.Enums;
 
 namespace Ramada.Service.DTOs.Bookings;
 

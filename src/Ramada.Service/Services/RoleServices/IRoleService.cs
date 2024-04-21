@@ -9,5 +9,5 @@ public interface IRoleService
     ValueTask<bool> Delete(long id);
     ValueTask<RoleViewModel> Update(long id, RoleUpdateeModel model);
     ValueTask<RoleViewModel> GetById(long id);
-    ValueTask<IEnumerable<RoleViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null); 
+    ValueTask<IEnumerable<RoleViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null);
 }
