@@ -35,7 +35,7 @@ public static class CollectionExtensions
                                      method,
                                      [entities.ElementType, selector.Type],
                                      expression,
-                                     Expression.Quote(Expression.Lambda(selector)));
+                                     Expression.Quote(Expression.Lambda(selector, parameter)));
 
         return entities.Provider.CreateQuery<T>(expression);
     }
