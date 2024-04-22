@@ -3,6 +3,7 @@ using Ramada.DataAccess.Contexts;
 using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
 using Ramada.Service.Options;
+using Ramada.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,5 +39,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 
 app.Run();
