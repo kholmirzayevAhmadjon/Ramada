@@ -5,9 +5,9 @@ namespace Ramada.Service.Services.Facilities;
 
 public interface IFacilityService
 {
-    ValueTask<FacilityViewModel> Create(FacilityCreateModel model);
-    ValueTask<bool> Delete(long id);
-    ValueTask<FacilityViewModel> Update(long id, FacilityUpdateModel model);
-    ValueTask<FacilityViewModel> GetById(long id);
-    ValueTask<IEnumerable<FacilityViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null);
+    ValueTask<FacilityViewModel> CreateAsync(FacilityCreateModel model);
+    ValueTask<bool> DeleteAsync(long id);
+    ValueTask<FacilityViewModel> UpdateAsync(long id, FacilityUpdateModel model);
+    ValueTask<FacilityViewModel> GetByIdAsync(long id);
+    ValueTask<IEnumerable<FacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null);
 }
