@@ -14,6 +14,7 @@ using Ramada.Service.Services.Rooms;
 using Newtonsoft.Json;
 using Ramada.Service.Services.Hostels;
 using Ramada.Service.Services.Assets;
+using Ramada.Service.Services.RoomFacilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,8 +44,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IHostelService, HostelService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IRoomFacilityService, RoomFacilityService>();
 
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
