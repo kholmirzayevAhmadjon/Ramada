@@ -11,14 +11,14 @@ namespace Ramada.Service.Services.RoleService;
 
 public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
 {
-    public async ValueTask<RoleViewModel> Create(RoleCreateModel model)
+    public async ValueTask<RoleViewModel> CreateAsync(RoleCreateModel model)
     {
         var role = await unitOfWork.Roles.SelectAsync(r => r.Name.ToLower() == model.Name.ToLower());
         if (role is not null)
         {
             if (!role.IsDeleted)
             {
-                await Update(role.Id, mapper.Map<RoleUpdateeModel>(role));
+                await UpdateAsync(role.Id, mapper.Map<RoleUpdateeModel>(role));
             }
             throw new AlreadyExistException("This role already exists");
 
@@ -30,7 +30,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return mapper.Map<RoleViewModel>(createRole);
     }
 
-    public async ValueTask<bool> Delete(long id)
+    public async ValueTask<bool> DeleteAsync(long id)
     {
         var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)
             ?? throw new NotFoundException("This role is not found");
@@ -42,7 +42,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return true;
     }
 
-    public async ValueTask<RoleViewModel> Update(long id, RoleUpdateeModel model)
+    public async ValueTask<RoleViewModel> UpdateAsync(long id, RoleUpdateeModel model)
     {
         var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)
             ?? throw new NotFoundException("This role is not found");
@@ -64,7 +64,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return mapper.Map<RoleViewModel>(existRoles);
     }
 
-    public async ValueTask<RoleViewModel> GetById(long id)
+    public async ValueTask<RoleViewModel> GetByIdAsync(long id)
     {
         var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)
             ?? throw new NotFoundException("This role is not found");
@@ -72,7 +72,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
         return mapper.Map<RoleViewModel>(role);
     }
 
-    public async ValueTask<IEnumerable<RoleViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<RoleViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var roles = unitOfWork.Roles.SelectAsQueryable().OrderBy(filter);
         if (!string.IsNullOrEmpty(search))
