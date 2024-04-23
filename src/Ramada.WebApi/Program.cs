@@ -3,26 +3,27 @@ using Ramada.DataAccess.Contexts;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
-using Ramada.Service.Options;
 using Ramada.Service.Services.Auths;
 using Ramada.Service.Services.RoleService;
 using Ramada.Service.Services.Users;
+using Ramada.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenJwt();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.Configure<JwtOption>(builder.Configuration);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddJwtService(builder.Configuration);
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -48,6 +49,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
