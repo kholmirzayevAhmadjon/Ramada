@@ -20,9 +20,10 @@ public class UserService(IUnitOfWork unitOfWork,
 {
     public async ValueTask<UserViewModel> CreateAsync(UserCreateModel user)
     {
-        var existUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
-            && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
-                       || u.Phone.Equals(user.Phone)));
+        var existUser = await unitOfWork.Users.SelectAsync(u => 
+            !u.IsDeleted
+            && (u.Email.Equals(user.Email)
+            || u.Phone.Equals(user.Phone)));
         var role = await roleService.GetByIdAsync(user.RoleId);
 
         if (existUser is not null)
@@ -81,10 +82,13 @@ public class UserService(IUnitOfWork unitOfWork,
     {
         var user = await unitOfWork.Users
             .SelectAsync(u => !u.IsDeleted
-                              && u.Password.Equals(PasswordHasher.Hash(model.Password))
                               && u.Phone.Equals(model.Phone),
                             ["Role"]) ??
-            throw new ArgumentIsNotValidException("Phone or Password is not valid");
+            throw new ArgumentIsNotValidException("Phone or Password is not found");
+
+        var isVerified = PasswordHasher.Verify(model.Password, user.Password);
+        if (!isVerified)
+            throw new NotFoundException("Phone or Password is not found");
 
         var token = authService.GenerateToken(user);
         var mappedUser = mapper.Map<UserViewModel>(user);
@@ -99,7 +103,7 @@ public class UserService(IUnitOfWork unitOfWork,
         var role = await roleService.GetByIdAsync(user.RoleId);
 
         var alreadyExistUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
-            && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
+            && (u.Email.Equals(user.Email)
                        || u.Phone.Equals(user.Phone)));
 
         if (alreadyExistUser is not null)

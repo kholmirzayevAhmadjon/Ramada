@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Ramada.Service.Configurations;
+using Ramada.Service.DTOs.Auths;
 using Ramada.Service.DTOs.Users;
 using Ramada.Service.Services.Users;
 using Ramada.WebApi.Models;
@@ -32,6 +34,7 @@ public class UsersController(IUserService userService) : BaseController
         });
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async ValueTask<IActionResult> PostAsync([FromBody] UserCreateModel user)
     {
@@ -64,5 +67,17 @@ public class UsersController(IUserService userService) : BaseController
             StatusCode = 200,
             Data = await userService.DeleteAsync(id)
         });
+    }
+
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async ValueTask<IActionResult> LogInAsync([FromBody] LogInCreateModel logIn)
+    {
+        return Ok(new Response()
+        {
+            Message = "Ok",
+            StatusCode = 200,
+            Data = await userService.LogInAsync(logIn)
+        }); 
     }
 }
