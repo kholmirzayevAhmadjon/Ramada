@@ -6,15 +6,18 @@ using Ramada.Service.DTOs.Rooms;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Services.Hostels;
 
 namespace Ramada.Service.Services.Rooms;
 
-public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
+public class RoomService(IUnitOfWork unitOfWork, IMapper mapper, IHostelService hostelService) : IRoomService
 {
     public async ValueTask<RoomViewModel> CreateAsync(RoomCreateModel model)
     {
+        var hostel = await hostelService.GetByIdAsync(model.HostelId);
         var existRoom = await unitOfWork.Rooms.InsertAsync(mapper.Map<Room>(model));
         await unitOfWork.SaveAsync();
+
         return mapper.Map<RoomViewModel>(existRoom);
     }
 
@@ -25,21 +28,25 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
 
         await unitOfWork.Rooms.DropAsync(existRoom);
         await unitOfWork.SaveAsync();
+
         return true;
     }
 
-    public async ValueTask<IEnumerable<RoomViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<RoomViewModel>> GetAllAsync(PaginationParams @params,
+                                                                   Filter filter,
+                                                                   string search = null)
     {
-        var rooms = unitOfWork.Rooms.SelectAsQueryable().OrderBy(filter);
-        if (!string.IsNullOrEmpty(search))
-            rooms = rooms.Where(f => f.Size.Contains(search, StringComparison.OrdinalIgnoreCase));
+        var rooms = unitOfWork.Rooms.SelectAsQueryable(includes: ["Hostel", "Facilities", "Assets", "Bookings"]).OrderBy(filter);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            rooms = rooms.Where(r => r.Description.ToLower().Contains(search.ToLower()));
 
         return await Task.FromResult(mapper.Map<IEnumerable<RoomViewModel>>(rooms.ToPaginate(@params)));
     }
 
     public async ValueTask<RoomViewModel> GetByIdAsync(long id)
     {
-        var room = await unitOfWork.Rooms.SelectAsync(room => room.Id == id)
+        var room = await unitOfWork.Rooms.SelectAsync(room => room.Id == id, ["Hostel"])
             ?? throw new NotFoundException($"Room is not found with this id: {id}");
 
         return mapper.Map<RoomViewModel>(room);
@@ -49,19 +56,12 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
     {
         var existRoom = await unitOfWork.Rooms.SelectAsync(room => room.Id == id)
             ?? throw new NotFoundException($"Room is not found with this id: {id}");
+        var hostel = await hostelService.GetByIdAsync(model.HostelId);
 
-        existRoom.Status = model.Status;
-        existRoom.Size = model.Size;
-        existRoom.Price = model.Price;
-        existRoom.HostelId = model.HostelId;
-        existRoom.RoomNumber = model.RoomNumber;
-        existRoom.Floor = model.Floor;
-        existRoom.Description = model.Description;
-        existRoom.MaxPeopleSize = model.MaxPeopleSize;
-        existRoom.UpdatedAt = DateTime.UtcNow;
+        mapper.Map(model, existRoom);
         existRoom.UpdatedByUserId = HttpContextHelper.UserId;
 
-        await unitOfWork.Rooms.UpdateAsync(existRoom);
+        existRoom = await unitOfWork.Rooms.UpdateAsync(existRoom);
         await unitOfWork.SaveAsync();
         return mapper.Map<RoomViewModel>(existRoom);
     }

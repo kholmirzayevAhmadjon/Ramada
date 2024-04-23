@@ -6,7 +6,7 @@ using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class FacilityController(IFacilityService facilityService) : BaseController
+public class FacilitiesController(IFacilityService facilityService) : BaseController
 {
     [HttpGet]
     public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
