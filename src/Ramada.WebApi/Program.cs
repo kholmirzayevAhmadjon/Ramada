@@ -4,6 +4,7 @@ using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
 using Ramada.Service.Options;
+using Ramada.WebApi.Middlewares;
 using Ramada.Service.Services.Auths;
 using Ramada.Service.Services.RoleService;
 using Ramada.Service.Services.Users;
@@ -52,5 +53,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 
 app.Run();
