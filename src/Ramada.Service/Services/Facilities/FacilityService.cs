@@ -13,13 +13,15 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
 {
     public async ValueTask<FacilityViewModel> CreateAsync(FacilityCreateModel model)
     {
-        var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Name.ToLower() == model.Name.ToLower())
-            ?? throw new AlreadyExistException("This facility already exists");
+        var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Name.ToLower() == model.Name.ToLower());
+        if (facility is not null)
+            throw new AlreadyExistException("This facility already exists");
 
-        var result = mapper.Map<Facility>(facility);
-        facility.CreatedByUserId = HttpContextHelper.UserId;
+        var result = mapper.Map<Facility>(model);
+        result.CreatedByUserId = HttpContextHelper.UserId;
         var createFacility = await unitOfWork.Facilities.InsertAsync(result);
         await unitOfWork.SaveAsync();
+
         return mapper.Map<FacilityViewModel>(createFacility);
     }
 
@@ -36,8 +38,8 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
     public async ValueTask<IEnumerable<FacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var facility = unitOfWork.Facilities.SelectAsQueryable().OrderBy(filter);
-        if (!string.IsNullOrEmpty(search))
-            facility = facility.Where(f => f.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+        if (!string.IsNullOrWhiteSpace(search))
+            facility = facility.Where(f => f.Name.ToLower().Contains(search.ToLower()));
 
         return await Task.FromResult(mapper.Map<IEnumerable<FacilityViewModel>>(facility.ToPaginate(@params)));
     }
@@ -55,12 +57,16 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
         var existFacility = await unitOfWork.Facilities.SelectAsync(facility => facility.Id == id)
             ?? throw new NotFoundException($"This facility not found ID = {id}");
 
-        existFacility.Name = model.Name;
-        existFacility.Description = model.Description;
-        existFacility.UpdatedAt = DateTime.UtcNow;
+        var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Name.ToLower() == model.Name.ToLower());
+        if (facility is not null)
+            throw new AlreadyExistException("This facility already exists");
+
+        mapper.Map(model, existFacility);
         existFacility.CreatedByUserId = HttpContextHelper.UserId;
+
         await unitOfWork.Facilities.UpdateAsync(existFacility);
         await unitOfWork.SaveAsync();
+
         return mapper.Map<FacilityViewModel>(existFacility);
     }
 }
