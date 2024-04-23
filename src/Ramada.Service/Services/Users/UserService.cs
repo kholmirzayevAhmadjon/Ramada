@@ -9,11 +9,13 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Auths;
+using Ramada.Service.Services.RoleService;
 
 namespace Ramada.Service.Services.Users;
 
 public class UserService(IUnitOfWork unitOfWork,
                          IAuthService authService,
+                         IRoleService roleService,   
                          IMapper mapper) : IUserService
 {
     public async ValueTask<UserViewModel> CreateAsync(UserCreateModel user)
@@ -21,6 +23,7 @@ public class UserService(IUnitOfWork unitOfWork,
         var existUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
             && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
                        || u.Phone.Equals(user.Phone)));
+        var role = await roleService.GetByIdAsync(user.RoleId);
 
         if (existUser is not null)
             throw new AlreadyExistException($"User already exists with this phone: {user.Phone} or email: {user.Email}");
@@ -32,7 +35,10 @@ public class UserService(IUnitOfWork unitOfWork,
         var createdUser = await unitOfWork.Users.InsertAsync(mappedUser);
         await unitOfWork.SaveAsync();
 
-        return mapper.Map<UserViewModel>(createdUser);
+        var result = mapper.Map<UserViewModel>(createdUser);
+        result.Role = role;
+
+        return result;
     }
 
     public async ValueTask<bool> DeleteAsync(long id)
@@ -52,7 +58,7 @@ public class UserService(IUnitOfWork unitOfWork,
                                                                    string search = null)
     {
         var users = unitOfWork.Users
-            .SelectAsQueryable(expression: u => !u.IsDeleted, isTracked: false)
+            .SelectAsQueryable(expression: u => !u.IsDeleted, isTracked: false, includes: ["Role"])
             .OrderBy(filter);
 
         if (!string.IsNullOrWhiteSpace(search))
@@ -65,7 +71,7 @@ public class UserService(IUnitOfWork unitOfWork,
 
     public async ValueTask<UserViewModel> GetByIdAsync(long id)
     {
-        var user = await unitOfWork.Users.SelectAsync(u => u.Id == id && !u.IsDeleted)
+        var user = await unitOfWork.Users.SelectAsync(u => u.Id == id && !u.IsDeleted, ["Role"])
             ?? throw new NotFoundException($"User is not found with this id: {id}");
 
         return mapper.Map<UserViewModel>(user);
@@ -76,7 +82,8 @@ public class UserService(IUnitOfWork unitOfWork,
         var user = await unitOfWork.Users
             .SelectAsync(u => !u.IsDeleted
                               && u.Password.Equals(PasswordHasher.Hash(model.Password))
-                              && u.Phone.Equals(model.Phone)) ??
+                              && u.Phone.Equals(model.Phone),
+                            ["Role"]) ??
             throw new ArgumentIsNotValidException("Phone or Password is not valid");
 
         var token = authService.GenerateToken(user);
@@ -89,6 +96,7 @@ public class UserService(IUnitOfWork unitOfWork,
     {
         var existUser = await unitOfWork.Users.SelectAsync(u => u.Id == id && !u.IsDeleted)
             ?? throw new NotFoundException($"User is not found with this id: {id}");
+        var role = await roleService.GetByIdAsync(user.RoleId);
 
         var alreadyExistUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
             && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
@@ -102,6 +110,9 @@ public class UserService(IUnitOfWork unitOfWork,
         var updatedUser = await unitOfWork.Users.UpdateAsync(existUser);
         await unitOfWork.SaveAsync();
 
-        return mapper.Map<UserViewModel>(updatedUser);
+        var result = mapper.Map<UserViewModel>(updatedUser);
+        result.Role = role;
+
+        return result;
     }
 }

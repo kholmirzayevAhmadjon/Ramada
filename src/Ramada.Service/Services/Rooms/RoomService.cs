@@ -28,7 +28,7 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
         return true;
     }
 
-    public async ValueTask<IEnumerable<RoomViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<RoomViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var rooms = unitOfWork.Rooms.SelectAsQueryable().OrderBy(filter);
         if (!string.IsNullOrEmpty(search))
@@ -37,7 +37,7 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomService
         return await Task.FromResult(mapper.Map<IEnumerable<RoomViewModel>>(rooms.ToPaginate(@params)));
     }
 
-    public async ValueTask<RoomViewModel> GetById(long id)
+    public async ValueTask<RoomViewModel> GetByIdAsync(long id)
     {
         var room = await unitOfWork.Rooms.SelectAsync(room => room.Id == id)
             ?? throw new NotFoundException($"Room is not found with this id: {id}");

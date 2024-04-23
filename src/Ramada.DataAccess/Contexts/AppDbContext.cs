@@ -26,7 +26,7 @@ public class AppDbContext : DbContext
     public DbSet<RoomAsset> RoomAssets { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RoomFacility> RoomFacilities { get; set; }
-    public DbSet<UserPermission> UserPermissions { get; set; }
+    public DbSet<UserPermissionn> UserPermissions { get; set; }
 
 
     public AppDbContext(DbContextOptions options) : base(options) { }
@@ -55,8 +55,8 @@ public class AppDbContext : DbContext
                 Id = 2,
                 RoleId = 2,
                 Password = BCrypt.HashPassword("Customer123", BCrypt.GenerateSalt(12)),
-                Phone = "+998901234567",
-                Email = "axmadjon@gmail.com",
+                Phone = "+998910052450",
+                Email = "ahmadjon@gmail.com",
                 CreatedAt = DateTime.UtcNow,
                 DeletedAt = null,
                 IsDeleted = false,
@@ -210,9 +210,9 @@ public class AppDbContext : DbContext
         #endregion
 
         #region UserPermissions
-        modelBuilder.Entity<UserPermission>().HasData
+        modelBuilder.Entity<UserPermissionn>().HasData
             (
-            new UserPermission()
+            new UserPermissionn()
             {
                 Id = 1,
                 PermissionId = 1,

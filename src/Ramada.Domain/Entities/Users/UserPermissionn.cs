@@ -2,7 +2,7 @@
 
 namespace Ramada.Domain.Entities.Users;
 
-public class UserPermission : Auditable
+public class UserPermissionn : Auditable
 {
     public long UserId { get; set; }
     public User User { get; set; }
