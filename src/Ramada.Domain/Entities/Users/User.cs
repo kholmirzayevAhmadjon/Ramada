@@ -9,5 +9,5 @@ public class User : Auditable
     public string Password { get; set; }
     public long RoleId { get; set; }
     public Role Role { get; set; }
-    public IEnumerable<UserPermission> Permissions { get; set; }
+    public IEnumerable<UserPermissionn> Permissions { get; set; }
 }

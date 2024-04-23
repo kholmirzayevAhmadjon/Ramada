@@ -11,7 +11,7 @@ namespace Ramada.Service.Services.Facilities;
 
 public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacilityService
 {
-    public async ValueTask<FacilityViewModel> Create(FacilityCreateModel model)
+    public async ValueTask<FacilityViewModel> CreateAsync(FacilityCreateModel model)
     {
         var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Name.ToLower() == model.Name.ToLower())
             ?? throw new AlreadyExistException("This facility already exists");
@@ -23,7 +23,7 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
         return mapper.Map<FacilityViewModel>(createFacility);
     }
 
-    public async ValueTask<bool> Delete(long id)
+    public async ValueTask<bool> DeleteAsync(long id)
     {
         var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Id == id)
             ?? throw new NotFoundException($"This facility not found ID = {id}");
@@ -33,7 +33,7 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
         return true;
     }
 
-    public async ValueTask<IEnumerable<FacilityViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<FacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var facility = unitOfWork.Facilities.SelectAsQueryable().OrderBy(filter);
         if (!string.IsNullOrEmpty(search))
@@ -42,7 +42,7 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
         return await Task.FromResult(mapper.Map<IEnumerable<FacilityViewModel>>(facility.ToPaginate(@params)));
     }
 
-    public async ValueTask<FacilityViewModel> GetById(long id)
+    public async ValueTask<FacilityViewModel> GetByIdAsync(long id)
     {
         var facility = await unitOfWork.Facilities.SelectAsync(facility => facility.Id == id)
             ?? throw new NotFoundException($"This facility not found ID = {id}");
@@ -50,7 +50,7 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
         return mapper.Map<FacilityViewModel>(facility);
     }
 
-    public async ValueTask<FacilityViewModel> Update(long id, FacilityUpdateModel model)
+    public async ValueTask<FacilityViewModel> UpdateAsync(long id, FacilityUpdateModel model)
     {
         var existFacility = await unitOfWork.Facilities.SelectAsync(facility => facility.Id == id)
             ?? throw new NotFoundException($"This facility not found ID = {id}");

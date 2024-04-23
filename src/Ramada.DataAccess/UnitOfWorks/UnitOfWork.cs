@@ -26,7 +26,7 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<RoomAsset> RoomAssets { get; }
     public IRepository<Permission> Permissions { get; }
     public IRepository<RoomFacility> RoomFacilities { get; }
-    public IRepository<UserPermission> UsersPermissions { get; }
+    public IRepository<UserPermissionn> UsersPermissions { get; }
 
 
     public UnitOfWork(AppDbContext context)
@@ -45,7 +45,7 @@ public class UnitOfWork : IUnitOfWork
         RoomAssets = new Repository<RoomAsset>(_context);
         Permissions = new Repository<Permission>(_context);
         RoomFacilities = new Repository<RoomFacility>(_context);
-        UsersPermissions = new Repository<UserPermission>(_context);
+        UsersPermissions = new Repository<UserPermissionn>(_context);
     }
 
     public void Dispose()

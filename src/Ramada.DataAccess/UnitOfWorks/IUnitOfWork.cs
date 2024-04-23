@@ -24,7 +24,7 @@ public interface IUnitOfWork : IDisposable
     IRepository<RoomAsset> RoomAssets { get; }
     IRepository<Permission> Permissions { get; }
     IRepository<RoomFacility> RoomFacilities { get; }
-    IRepository<UserPermission> UsersPermissions { get; }
+    IRepository<UserPermissionn> UsersPermissions { get; }
 
     ValueTask<bool> SaveAsync();
 }
