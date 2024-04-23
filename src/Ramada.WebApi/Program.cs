@@ -9,6 +9,7 @@ using Ramada.Service.Services.Auths;
 using Ramada.Service.Services.RoleService;
 using Ramada.Service.Services.Users;
 using Ramada.WebApi.Extensions;
+using Ramada.Service.Services.RoomFacilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoomFacilityService, RoomFacilityService>();
 
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
