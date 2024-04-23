@@ -42,3 +42,4 @@ public class AddressController(IAddressService addressService) : BaseController
             Data = await addressService.CreateAsync(addressCreateModel)
         });
     }
+}
