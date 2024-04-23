@@ -23,7 +23,7 @@ public class UserService(IUnitOfWork unitOfWork,
         var existUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
             && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
                        || u.Phone.Equals(user.Phone)));
-        var role = await roleService.GetById(user.RoleId);
+        var role = await roleService.GetByIdAsync(user.RoleId);
 
         if (existUser is not null)
             throw new AlreadyExistException($"User already exists with this phone: {user.Phone} or email: {user.Email}");
@@ -96,7 +96,7 @@ public class UserService(IUnitOfWork unitOfWork,
     {
         var existUser = await unitOfWork.Users.SelectAsync(u => u.Id == id && !u.IsDeleted)
             ?? throw new NotFoundException($"User is not found with this id: {id}");
-        var role = await roleService.GetById(user.RoleId);
+        var role = await roleService.GetByIdAsync(user.RoleId);
 
         var alreadyExistUser = await unitOfWork.Users.SelectAsync(u => !u.IsDeleted
             && (u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)
