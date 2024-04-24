@@ -7,7 +7,7 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 
-namespace Ramada.Service.Services.RoleService;
+namespace Ramada.Service.Services.Roles;
 
 public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
 {

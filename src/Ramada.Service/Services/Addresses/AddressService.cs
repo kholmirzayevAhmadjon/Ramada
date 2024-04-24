@@ -15,26 +15,25 @@ public class AddressService(IMapper mapper, IUnitOfWork unitOfWork) : IAddressSe
 {
     public async ValueTask<AddressViewModel> CreateAsync(AddressCreateModel addressCreateModel)
     {
-        var existAddress = await unitOfWork.Addresses.InsertAsync(mapper.Map<Address>(addressCreateModel));
+        var address = mapper.Map<Address>(addressCreateModel);
+        address.CreatedByUserId = HttpContextHelper.UserId;
+        var existAddress = await unitOfWork.Addresses.InsertAsync(address);
         await unitOfWork.SaveAsync();
+
         return mapper.Map<AddressViewModel>(existAddress);
     }
+
     public async ValueTask<AddressViewModel> UpdateAsync(long id, AddressUpdateModel addressUpdateModel)
     {
         var existAddress = await unitOfWork.Addresses.SelectAsync(address => address.Id == id)
              ?? throw new NotFoundException($"Address is not found with this id: {id}");
 
-        existAddress.Street = addressUpdateModel.Street;
-        existAddress.City = addressUpdateModel.City;
-        existAddress.HouseNumber = addressUpdateModel.HouseNumber;
-        existAddress.Latitude = addressUpdateModel.Latitude;
-        existAddress.Longitude = addressUpdateModel.Longitude;
-        existAddress.PostCode = addressUpdateModel.PostCode;
-        existAddress.UpdatedAt = DateTime.UtcNow;
+        mapper.Map(addressUpdateModel, existAddress);
         existAddress.UpdatedByUserId = HttpContextHelper.UserId;
 
         await unitOfWork.Addresses.UpdateAsync(existAddress);
         await unitOfWork.SaveAsync();
+
         return mapper.Map<AddressViewModel>(existAddress);
     }
 
@@ -44,22 +43,26 @@ public class AddressService(IMapper mapper, IUnitOfWork unitOfWork) : IAddressSe
              ?? throw new NotFoundException($"Address is not found with this id: {id}");
         await unitOfWork.Addresses.DropAsync(existAddress);
         await unitOfWork.SaveAsync();
+
         return true;
     }
 
-    public async ValueTask<AddressViewModel> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<AddressViewModel>> GetAllAsync(PaginationParams @params,
+                                                                      Filter filter,
+                                                                      string search = null)
     {
         var addresses = unitOfWork.Addresses.SelectAsQueryable().OrderBy(filter);
-        if (!string.IsNullOrEmpty(search))
-            addresses = addresses.Where(f => f.Street.Contains(search, StringComparison.OrdinalIgnoreCase));
+        if (!string.IsNullOrWhiteSpace(search))
+            addresses = addresses.Where(f => f.Street.ToLower().Contains(search.ToLower()));
 
-        return (AddressViewModel)await Task.FromResult(mapper.Map<IEnumerable<AddressViewModel>>(addresses.ToPaginate(@params)));
+        return await Task.FromResult(mapper.Map<IEnumerable<AddressViewModel>>(addresses.ToPaginate(@params)));
     }
 
     public async ValueTask<AddressViewModel> GetByIdAsync(long id)
     {
         var existAddress = await unitOfWork.Addresses.SelectAsync(address => address.Id == id)
              ?? throw new NotFoundException($"Address is not found with this id: {id}");
+
         return  mapper.Map<AddressViewModel>(existAddress);
     }
 }

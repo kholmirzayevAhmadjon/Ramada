@@ -68,6 +68,7 @@ public class MappingProfile : Profile
         CreateMap<RoomAsset, RoomAssetViewModel>().ReverseMap();
 
         CreateMap<RoomFacilityCreateModel, RoomFacility>().ReverseMap();
+        CreateMap<RoomFacilityUpdateModel, RoomFacility>().ReverseMap();
         CreateMap<RoomFacility, RoomFacilityViewModel>().ReverseMap();
 
         CreateMap<UserPermissionCreateModel, UserPermissionn>().ReverseMap();
