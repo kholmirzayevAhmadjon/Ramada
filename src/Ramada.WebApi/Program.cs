@@ -17,6 +17,8 @@ using Ramada.Service.Services.Assets;
 using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Bookings;
 using Ramada.Service.Services.Customers;
+using Ramada.Service.Services.Payments;
+using Ramada.Service.Services.Addresses;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,15 +29,14 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenJwt();
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+builder.Services.AddAuthorization();
 builder.Services.AddJwtService(builder.Configuration);
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -43,24 +44,25 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IHostelService, HostelService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IRoomFacilityService, RoomFacilityService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-    context.Database.Migrate();
-}
+using var scope = app.Services.CreateScope();
+HttpContextHelper.HttpContextAccessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+context.Database.EnsureCreated();
+context.Database.Migrate();
 
 if (app.Environment.IsDevelopment())
 {
