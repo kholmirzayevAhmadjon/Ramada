@@ -22,7 +22,8 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
         //booking.CustomerId = customerId;  
         booking.CreatedAt = DateTime.UtcNow;
 
-        var existCustomer = unitOfWork.Customers.SelectAsync(c => c.Id == bookingCreateModel.CustomerId);
+        var existCustomer = await unitOfWork.Customers.SelectAsync(c => c.Id == bookingCreateModel.CustomerId)
+            ?? throw new NotFoundException("user with this id is not found");
 
         var existRoom = await unitOfWork.Rooms.SelectAsync(r => r.Id == bookingCreateModel.RoomId)
             ?? throw new NotFoundException($"Room with this Id is not found {bookingCreateModel.RoomId}");
@@ -37,6 +38,9 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
         var view = mapper.Map<BookingViewModel>(booking);
         view.Customer = mapper.Map<CustomerViewModel>(existCustomer);
         view.Room = mapper.Map<RoomViewModel>(existRoom);
+
+        await unitOfWork.Bookings.InsertAsync(booking);
+        await unitOfWork.SaveAsync();
 
         return view;
     }
@@ -99,6 +103,9 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
         existBooking.UpdatedByUserId = HttpContextHelper.UserId;
         existBooking.NumberOfDays = bookingUpdateModel.NumberOfDays;
         existBooking.NumberOfPeople = bookingUpdateModel.NumberOfPeople;
+
+        await unitOfWork.Bookings.UpdateAsync(existBooking);
+        await unitOfWork.SaveAsync();
 
         return mapper.Map<BookingViewModel>(existBooking);
     }
