@@ -40,7 +40,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddJwtService(builder.Configuration);
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
