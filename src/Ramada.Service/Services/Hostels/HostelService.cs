@@ -4,23 +4,23 @@ using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Hostels;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Hostels;
-using Ramada.Service.Exceptions; 
+using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
-using Ramada.Service.Services.Assets;
+using Ramada.Service.Services.Addresses;
 using Ramada.Service.Services.Users;
 
 namespace Ramada.Service.Services.Hostels;
 
 public class HostelService(IUnitOfWork unitOfWork,
                            IUserService userService,
-                           IAssetService assetService,
+                           IAddressService addressService,
                            IMapper mapper) : IHostelService
 {
     public async ValueTask<HostelViewModel> CreateAsync(HostelCreateModel hostel)
     {
         var user = await userService.GetByIdAsync(hostel.UserId);
-        var asset = await assetService.GetByIdAsync(hostel.AssetId ?? 0);
+        var address = await addressService.GetByIdAsync(hostel.AddressId);
 
         var mappedHostel = mapper.Map<Hostel>(hostel);
         mappedHostel.CreatedByUserId = HttpContextHelper.UserId;
@@ -30,7 +30,7 @@ public class HostelService(IUnitOfWork unitOfWork,
 
         var result = mapper.Map<HostelViewModel>(createdHostel);
         result.User = user;
-        result.Asset = asset;
+        result.Address = address;
 
         return result;
     }
@@ -50,11 +50,11 @@ public class HostelService(IUnitOfWork unitOfWork,
     public async ValueTask<IEnumerable<HostelViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var hostels = unitOfWork.Hostels
-            .SelectAsQueryable(h => !h.IsDeleted, ["User", "Asset", "Rooms"], false)
+            .SelectAsQueryable(h => !h.IsDeleted, ["User", "Asset", "Rooms", "Address"], false)
             .OrderBy(filter);
 
         if (!string.IsNullOrWhiteSpace(search))
-            hostels = hostels.Where(h => h.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+            hostels = hostels.Where(h => h.Name.ToLower().Contains(search.ToLower()));
 
         var result = await hostels.ToPaginate(@params).ToListAsync();
 
@@ -63,7 +63,7 @@ public class HostelService(IUnitOfWork unitOfWork,
 
     public async ValueTask<HostelViewModel> GetByIdAsync(long id)
     {
-        var hostel = await unitOfWork.Hostels.SelectAsync(h => h.Id == id && !h.IsDeleted, ["User", "Asset", "Rooms"])
+        var hostel = await unitOfWork.Hostels.SelectAsync(h => h.Id == id && !h.IsDeleted, ["User", "Asset", "Rooms", "Address"])
             ?? throw new NotFoundException($"Hostel is not found with this id: {id}");
 
         return mapper.Map<HostelViewModel>(hostel);
@@ -74,7 +74,7 @@ public class HostelService(IUnitOfWork unitOfWork,
         var existHostel = await unitOfWork.Hostels.SelectAsync(h => h.Id == id && !h.IsDeleted)
             ?? throw new NotFoundException($"Hostel is not found with this id: {id}");
         var user = await userService.GetByIdAsync(hostel.UserId);
-        var asset = await assetService.GetByIdAsync(hostel.AssetId ?? 0);
+        var address = await addressService.GetByIdAsync(hostel.AddressId);
 
         mapper.Map(hostel, existHostel);
         existHostel.UpdatedByUserId = HttpContextHelper.UserId;
@@ -83,7 +83,7 @@ public class HostelService(IUnitOfWork unitOfWork,
         await unitOfWork.SaveAsync();
 
         var result = mapper.Map<HostelViewModel>(updatedHostel);
-        result.Asset = asset;
+        result.Address = address;
         result.User = user;
 
         return result;
