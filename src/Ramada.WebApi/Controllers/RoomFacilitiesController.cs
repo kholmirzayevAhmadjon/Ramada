@@ -32,7 +32,6 @@
             });
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async ValueTask<IActionResult> PostAsync([FromBody] RoomFacilityCreateModel model)
         {
