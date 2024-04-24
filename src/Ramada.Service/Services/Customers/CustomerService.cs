@@ -7,19 +7,16 @@ using Ramada.Service.DTOs.Customers;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
-using Ramada.Service.Services.Assets;
 using Ramada.Service.Services.Users;
 
 namespace Ramada.Service.Services.Customers;
 
 public class CustomerService(IUnitOfWork unitOfWork,
                              IUserService userService,
-                             IAssetService assetService,
                              IMapper mapper) : ICustomerService
 {
     public async ValueTask<CustomerViewModel> CreateAsync(CustomerCreateModel customer)
     {
-        var asset = await assetService.GetByIdAsync(customer.AssetId ?? 0);
         var user = await userService.GetByIdAsync(customer.UserId);
 
         var mappedCustomer = mapper.Map<Customer>(customer);
@@ -30,7 +27,6 @@ public class CustomerService(IUnitOfWork unitOfWork,
 
         var result = mapper.Map<CustomerViewModel>(createdCustomer);
         result.User = user;
-        result.Asset = asset;
 
         return result;
     }
@@ -55,8 +51,8 @@ public class CustomerService(IUnitOfWork unitOfWork,
 
         if (!string.IsNullOrWhiteSpace(search))
             customers = customers.Where(c =>
-                c.FirstName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                c.LastName.Contains(search, StringComparison.OrdinalIgnoreCase));
+                c.FirstName.ToLower().Contains(search.ToLower()) ||
+                c.LastName.ToLower().Contains(search.ToLower()));
 
         var result = await customers.ToPaginate(@params).ToListAsync();
 
@@ -75,7 +71,6 @@ public class CustomerService(IUnitOfWork unitOfWork,
     {
         var existCustomer = await unitOfWork.Customers.SelectAsync(c => c.Id == id && !c.IsDeleted)
             ?? throw new NotFoundException($"Customer is not found with this id: {id}");
-        var asset = await assetService.GetByIdAsync(customer.AssetId ?? 0);
         var user = await userService.GetByIdAsync(customer.UserId);
 
         mapper.Map(customer, existCustomer);
@@ -86,7 +81,6 @@ public class CustomerService(IUnitOfWork unitOfWork,
 
         var result = mapper.Map<CustomerViewModel>(updatedCustomer);
         result.User = user;
-        result.Asset = asset;
         
         return result;
     }
