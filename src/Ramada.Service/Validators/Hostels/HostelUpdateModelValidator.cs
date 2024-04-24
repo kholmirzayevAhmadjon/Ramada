@@ -1,16 +1,11 @@
 ﻿using FluentValidation;
 using Ramada.Service.DTOs.Hostels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ramada.Service.Validators.Hostels;
 
-public class HostelCreateModelValidator : AbstractValidator<HostelCreateModel>
+public class HostelUpdateModelValidator : AbstractValidator<HostelUpdateModel>
 {
-    public HostelCreateModelValidator()
+    public HostelUpdateModelValidator()
     {
         RuleFor(hostel => hostel.UserId)
             .NotNull()
