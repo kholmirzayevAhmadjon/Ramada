@@ -43,6 +43,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<UserCreateModelValidator>();
         services.AddTransient<UserUpdateModelValidator>();
+
+        services.AddTransient<RoomFacilityCreateModelValidator>();
+        services.AddTransient<RoomFacilityUpdateModelValidator>();
         
         services.AddTransient<RoleCreateModelValidator>();
         services.AddTransient<RoleUpdateModelValidator>();
