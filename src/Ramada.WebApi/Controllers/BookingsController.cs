@@ -64,4 +64,16 @@ public class BookingsController(IBookingService service) : BaseController
             Data = await service.DeleteAsync(id)
         });
     }
+
+    [HttpPatch("{id:long}")]
+    public async ValueTask<IActionResult> FinishBooking(long id)
+    {
+        return Ok(new Response
+        {
+            StatusCode = 200,
+            Message = "Success",
+            Data = await service.FinishBooking(id)
+        });
+    }
+
 }
