@@ -32,6 +32,8 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
 
         if (!IsSuitable)
             throw new ArgumentException("Room is busy or too small for you");
+        booking.Room= existRoom;
+        booking.Customer = existCustomer;
 
         existRoom.Status = Domain.Enums.RoomStatus.Busy;
 
@@ -51,6 +53,7 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
             ?? throw new NotFoundException($"Booking with this iD is not found ={id}");
 
         existBooking.DeletedByUserId = HttpContextHelper.UserId;
+
         await unitOfWork.Bookings.DeleteAsync(existBooking);
         await unitOfWork.SaveAsync();
 
@@ -61,8 +64,8 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
     {
         var existBooking = await unitOfWork.Bookings.SelectAsync(b => b.Id == id)
             ?? throw new NotFoundException($"Booking with this Id is not found {id}");
-
-        existBooking.Room.Status = Domain.Enums.RoomStatus.Empty;
+        var existRoom = await unitOfWork.Rooms.SelectAsync(r => r.Id == id);
+        existRoom.Status= Domain.Enums.RoomStatus.Empty;
 
         await unitOfWork.Bookings.DeleteAsync(existBooking);
         await unitOfWork.SaveAsync();
@@ -74,7 +77,7 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
     public async ValueTask<IEnumerable<BookingViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var bookings = unitOfWork.Bookings
-            .SelectAsQueryable(expression: user => !user.IsDeleted, isTracked: false);
+            .SelectAsQueryable(expression: user => !user.IsDeleted, includes: ["Customer", "Room"], isTracked: false);
 
         var res = await bookings.ToPaginate(@params).ToListAsync();
         var mappedBookings = mapper.Map<IEnumerable<BookingViewModel>>(res);
@@ -84,7 +87,7 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
 
     public async ValueTask<BookingViewModel> GetAsync(long id)
     {
-        var existBooking = await unitOfWork.Bookings.SelectAsync(b => b.Id == id)
+        var existBooking = await unitOfWork.Bookings.SelectAsync(b => b.Id == id, includes: ["Customer", "Room"])
             ?? throw new NotFoundException($"Booking with this Id is not found {id}");
 
         return mapper.Map<BookingViewModel>(existBooking);
