@@ -1,23 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Ramada.Service.Configurations;
-using Ramada.Service.DTOs.Roles;
-using Ramada.Service.Services.Roles;
+using Ramada.Service.DTOs.Addresses;
+using Ramada.Service.Services.Addresses;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class RolesController(IRoleService roleService) : BaseController
+public class AddressesController(IAddressService addressService) : BaseController
 {
     [HttpGet]
     public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
-                                             [FromQuery] Filter filter,
-                                             [FromQuery] string search)
+                                          [FromQuery] Filter filter,
+                                          [FromQuery] string search)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roleService.GetAllAsync(@params, filter, search)
+            Data = await addressService.GetAllAsync(@params, filter, search)
         });
     }
 
@@ -28,41 +28,41 @@ public class RolesController(IRoleService roleService) : BaseController
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roleService.GetByIdAsync(id)
+            Data = await addressService.GetByIdAsync(id)
         });
     }
 
     [HttpPost]
-    public async ValueTask<IActionResult> PostAsync([FromBody] RoleCreateModel role)
+    public async ValueTask<IActionResult> PostAsync([FromBody] AddressCreateModel addressCreateModel)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roleService.CreateAsync(role)
+            Data = await addressService.CreateAsync(addressCreateModel)
         });
     }
 
     [HttpPut("{id}")]
     public async ValueTask<IActionResult> PutAsync([FromRoute] long id,
-                                             [FromBody] RoleUpdateeModel role)
+                                              [FromBody] AddressUpdateModel addressUpdateModel)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roleService.UpdateAsync(id, role)
+            Data = await addressService.UpdateAsync(id, addressUpdateModel)
         });
     }
 
-    [HttpDelete("{id}")]
+  [HttpDelete("{id}")]
     public async ValueTask<IActionResult> DeleteAsync([FromRoute] long id)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roleService.DeleteAsync(id)
+            Data = await addressService.DeleteAsync(id)
         });
     }
 }

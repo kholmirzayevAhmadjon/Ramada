@@ -18,11 +18,11 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
     {
         var booking = mapper.Map<Booking>(bookingCreateModel);
         booking.Status = Domain.Enums.BookingStatus.Incompleted;
-        var customerId = HttpContextHelper.UserId;
-        booking.CustomerId = customerId;
+        //var customerId = HttpContextHelper.UserId;
+        //booking.CustomerId = customerId;  
         booking.CreatedAt = DateTime.UtcNow;
 
-        var existCustomer = unitOfWork.Customers.SelectAsync(c => c.Id == customerId);
+        var existCustomer = unitOfWork.Customers.SelectAsync(c => c.Id == bookingCreateModel.CustomerId);
 
         var existRoom = await unitOfWork.Rooms.SelectAsync(r => r.Id == bookingCreateModel.RoomId)
             ?? throw new NotFoundException($"Room with this Id is not found {bookingCreateModel.RoomId}");
@@ -67,7 +67,7 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
 
     }
 
-    public async ValueTask<IEnumerable<BookingViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<BookingViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
     {
         var bookings = unitOfWork.Bookings
             .SelectAsQueryable(expression: user => !user.IsDeleted, isTracked: false);

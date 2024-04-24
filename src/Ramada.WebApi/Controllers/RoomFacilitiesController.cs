@@ -11,14 +11,13 @@
     {
         [HttpGet]
         public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
-        [FromQuery] Filter filter,
-                                                 [FromQuery] string search)
+                                                        [FromQuery] Filter filter)
         {
             return Ok(new Response()
             {
                 Message = "Ok",
                 StatusCode = 200,
-                Data = await roomFacilityService.GetAllAsync(@params, filter, search)
+                Data = await roomFacilityService.GetAllAsync(@params, filter)
             });
         }
 

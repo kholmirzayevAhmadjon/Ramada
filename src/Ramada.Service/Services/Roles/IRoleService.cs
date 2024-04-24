@@ -1,7 +1,7 @@
 ﻿using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Roles;
 
-namespace Ramada.Service.Services.RoleService;
+namespace Ramada.Service.Services.Roles;
 
 public interface IRoleService
 {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Rooms;
 using Ramada.Service.Configurations;
@@ -6,24 +7,31 @@ using Ramada.Service.DTOs.RoomFacilities;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Services.Facilities;
+using Ramada.Service.Services.Rooms;
 
 namespace Ramada.Service.Services.RoomFacilities;
 
-public class RoomFacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IRoomFacilityService
+public class RoomFacilityService(IUnitOfWork unitOfWork,
+                                 IRoomService roomService,
+                                 IFacilityService facilityService,
+                                 IMapper mapper) : IRoomFacilityService
 {
     public async ValueTask<RoomFacilityViewModel> CreateAsync(RoomFacilityCreateModel model)
     {
-        var room = await unitOfWork.Rooms.SelectAsync(room => room.Id == model.RoomId)
-            ?? throw new NotFoundException($"Room is not found with this id: {model.RoomId}");
-
-        var facility = await unitOfWork.Facilities.SelectAsync(facility => facility.Id == model.FacilityId)
-            ?? throw new NotFoundException($"Facility is not found with this id: {model.FacilityId}");
+        var room = await roomService.GetByIdAsync(model.RoomId);
+        var facility = await facilityService.GetByIdAsync(model.FacilityId);
 
         var roomFacility = mapper.Map<RoomFacility>(model);
         roomFacility.CreatedByUserId = HttpContextHelper.UserId;
         var createRoomFacility = await unitOfWork.RoomFacilities.InsertAsync(roomFacility);
         await unitOfWork.SaveAsync();
-        return mapper.Map<RoomFacilityViewModel>(createRoomFacility);
+
+        var result = mapper.Map<RoomFacilityViewModel>(createRoomFacility);
+        result.Room = room;
+        result.Facility = facility;
+
+        return result;
     }
 
     public async ValueTask<bool> DeleteAsync(long id)
@@ -33,41 +41,47 @@ public class RoomFacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IRoom
 
         await unitOfWork.RoomFacilities.DropAsync(roomFacility);
         await unitOfWork.SaveAsync();
+
         return true;
     }
 
     public async ValueTask<RoomFacilityViewModel> GetByIdAsync(long id)
     {
-        var roomFacility = await unitOfWork.RoomFacilities.SelectAsync(r => r.Id == id)
+        var roomFacility = await unitOfWork.RoomFacilities.SelectAsync(r => r.Id == id, ["Room", "Facility"])
             ?? throw new NotFoundException($"RoomFacility is not found with this id: {id}");
 
         return mapper.Map<RoomFacilityViewModel>(roomFacility);
     }
 
-    public async ValueTask<IEnumerable<RoomFacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null)
+    public async ValueTask<IEnumerable<RoomFacilityViewModel>> GetAllAsync(PaginationParams @params,
+                                                                           Filter filter)
     {
-        var roomFacilities = unitOfWork.RoomFacilities.SelectAsQueryable().OrderBy(filter);
+        var roomFacilities = await unitOfWork.RoomFacilities
+            .SelectAsQueryable(includes: ["Room", "Facility"])
+            .OrderBy(filter)
+            .ToPaginate(@params)
+            .ToListAsync();
 
-        if(!string.IsNullOrEmpty(search))
-            roomFacilities = roomFacilities.Where(f => Convert.ToString(f.RoomId).Contains(search, StringComparison.OrdinalIgnoreCase));
-       
-        return await Task.FromResult(mapper.Map<IEnumerable<RoomFacilityViewModel>>(roomFacilities.ToPaginate(@params)));
+        return mapper.Map<IEnumerable<RoomFacilityViewModel>>(roomFacilities);
     }
 
     public async ValueTask<RoomFacilityViewModel> UpdateAsync(long id, RoomFacilityUpdateModel model)
     {
         var roomFacility = await unitOfWork.RoomFacilities.SelectAsync(r => r.Id == id)
             ?? throw new NotFoundException($"RoomFacility is not found with this id: {id}");
+        var room = await roomService.GetByIdAsync(model.RoomId);
+        var facility = await facilityService.GetByIdAsync(model.FacilityId);
 
-        roomFacility.RoomId = model.RoomId;
-        roomFacility.FacilityId = model.FacilityId;
+        mapper.Map(model, roomFacility);
         roomFacility.UpdatedByUserId = HttpContextHelper.UserId;
-        roomFacility.UpdatedAt = DateTime.UtcNow;
-        roomFacility.Count = model.Count;
 
         var updateRoomFacility = await unitOfWork.RoomFacilities.UpdateAsync(roomFacility);
         await unitOfWork.SaveAsync();
 
-        return mapper.Map<RoomFacilityViewModel>(updateRoomFacility);
+        var result = mapper.Map<RoomFacilityViewModel>(updateRoomFacility);
+        result.Facility = facility;
+        result.Room = room;
+
+        return result;
     }
 }

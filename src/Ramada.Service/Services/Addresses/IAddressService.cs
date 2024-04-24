@@ -10,7 +10,7 @@ public interface IAddressService
     ValueTask<AddressViewModel> UpdateAsync(long id,AddressUpdateModel addressUpdateModel);
     ValueTask<bool> DeleteAsync(long id);
     ValueTask<AddressViewModel> GetByIdAsync(long id);
-    ValueTask<AddressViewModel> GetAllAsync(PaginationParams @params,
+    ValueTask<IEnumerable<AddressViewModel>> GetAllAsync(PaginationParams @params,
                                                         Filter filter,
                                                         string search = null);
 }

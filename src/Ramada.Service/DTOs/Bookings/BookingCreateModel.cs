@@ -9,5 +9,4 @@ public class BookingCreateModel
     public int NumberOfPeople { get; set; }
     public DateTime StartDate { get; set; }
     public int NumberOfDays { get; set; }
-    public BookingStatus Status { get; set; }
 }
