@@ -9,16 +9,21 @@ using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Facilities;
 using Ramada.Service.Services.Rooms;
+using Ramada.Service.Validators.RoomFacilities;
 
 namespace Ramada.Service.Services.RoomFacilities;
 
 public class RoomFacilityService(IUnitOfWork unitOfWork,
                                  IRoomService roomService,
                                  IFacilityService facilityService,
-                                 IMapper mapper) : IRoomFacilityService
+                                 IMapper mapper,
+                                 RoomFacilityCreateModelValidator roomFacilityCreateModelValidator,
+                                 RoomFacilityUpdateModelValidator roomFacilityUpdateModelValidator) : IRoomFacilityService
 {
     public async ValueTask<RoomFacilityViewModel> CreateAsync(RoomFacilityCreateModel model)
     {
+        await roomFacilityCreateModelValidator.ValidateOrPanicAsync(model);
+
         var room = await roomService.GetByIdAsync(model.RoomId);
         var facility = await facilityService.GetByIdAsync(model.FacilityId);
 
@@ -67,6 +72,8 @@ public class RoomFacilityService(IUnitOfWork unitOfWork,
 
     public async ValueTask<RoomFacilityViewModel> UpdateAsync(long id, RoomFacilityUpdateModel model)
     {
+        await roomFacilityUpdateModelValidator.ValidateOrPanicAsync(model);
+
         var roomFacility = await unitOfWork.RoomFacilities.SelectAsync(r => r.Id == id)
             ?? throw new NotFoundException($"RoomFacility is not found with this id: {id}");
         var room = await roomService.GetByIdAsync(model.RoomId);
