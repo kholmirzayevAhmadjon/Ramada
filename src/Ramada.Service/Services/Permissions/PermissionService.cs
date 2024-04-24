@@ -14,8 +14,8 @@ public class PermissionService(IUnitOfWork unitOfWork, IMapper mapper) : IPermis
     public async ValueTask<PermissionViewModel> CreateAsync(PermissionCreateModel permission)
     {
         var existPermission = await unitOfWork.Permissions
-            .SelectAsync(p => p.Method.Equals(permission.Method, StringComparison.OrdinalIgnoreCase) &&
-                              p.Controller.Equals(permission.Controller, StringComparison.OrdinalIgnoreCase));
+            .SelectAsync(p => p.Method.ToLower().Equals(permission.Method.ToLower()) &&
+                              p.Controller.ToLower().Equals(permission.Controller.ToLower()));
 
         if (existPermission is not null)
             throw new AlreadyExistException("This kind of permission already exists");
@@ -46,8 +46,8 @@ public class PermissionService(IUnitOfWork unitOfWork, IMapper mapper) : IPermis
         var permissions = unitOfWork.Permissions.SelectAsQueryable(isTracked: false).OrderBy(filter);
 
         if (!string.IsNullOrWhiteSpace(search))
-            permissions = permissions.Where(p => p.Method.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                                                 p.Controller.Contains(search, StringComparison.OrdinalIgnoreCase));
+            permissions = permissions.Where(p => p.Method.ToLower().Contains(search.ToLower()) ||
+                                                 p.Controller.ToLower().Contains(search.ToLower()));
 
         var result = await permissions.ToPaginate(@params).ToListAsync();
 
@@ -68,8 +68,8 @@ public class PermissionService(IUnitOfWork unitOfWork, IMapper mapper) : IPermis
             ?? throw new NotFoundException($"Permission is not found with this id: {id}");
 
         var alreadyExistPermission = await unitOfWork.Permissions
-           .SelectAsync(p => p.Method.Equals(permission.Method, StringComparison.OrdinalIgnoreCase) &&
-                             p.Controller.Equals(permission.Controller, StringComparison.OrdinalIgnoreCase));
+           .SelectAsync(p => p.Method.ToLower().Equals(permission.Method.ToLower()) &&
+                             p.Controller.ToLower().Equals(permission.Controller.ToLower()));
 
         if (alreadyExistPermission is not null)
             throw new AlreadyExistException("This kind of permission already exists");

@@ -7,8 +7,12 @@ using Ramada.Service.Mappers;
 using Ramada.WebApi.Extensions;
 using Ramada.WebApi.Helpers;
 using Ramada.WebApi.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers(options
     => options.Conventions
