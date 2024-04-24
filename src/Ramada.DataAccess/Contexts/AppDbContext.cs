@@ -70,7 +70,7 @@ public class AppDbContext : DbContext
                 Id = 3,
                 RoleId = 3,
                 Password = BCrypt.HashPassword("Hostel123", BCrypt.GenerateSalt(12)),
-                Phone = "+998903478923",
+                Phone = "+cc",
                 Email = "sayidahror@gmail.com",
                 CreatedAt = DateTime.UtcNow,
                 DeletedAt = null,

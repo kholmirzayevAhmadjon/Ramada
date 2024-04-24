@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ramada.DataAccess.UnitOfWorks;
+using Ramada.Service.DTOs.Users;
 using Ramada.Service.Options;
 using Ramada.Service.Services.Addresses;
 using Ramada.Service.Services.Assets;
@@ -18,6 +20,7 @@ using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Rooms;
 using Ramada.Service.Services.UserPermissions;
 using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Users;
 using System.Text;
 
 namespace Ramada.WebApi.Extensions;
@@ -26,7 +29,8 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCustomValidators(this IServiceCollection services)
     {
-
+        services.AddTransient<UserCreateModelValidator>();
+        services.AddTransient<UserUpdateModelValidator>();
     }
 
     public static void AddCustomServices(this IServiceCollection services)
