@@ -6,13 +6,19 @@ using Ramada.Service.Configurations;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Permissions;
 
 namespace Ramada.Service.Services.Permissions;
 
-public class PermissionService(IUnitOfWork unitOfWork, IMapper mapper) : IPermissionService
+public class PermissionService(IUnitOfWork unitOfWork, 
+                                IMapper mapper,
+                                PermissionCreateModelValidator permissionCreateModelValidator,
+                                PermissionUpdateModelValidator permissionUpdateModelValidator) : IPermissionService
 {
     public async ValueTask<PermissionViewModel> CreateAsync(PermissionCreateModel permission)
     {
+        await permissionCreateModelValidator.ValidateOrPanicAsync(permission);
+
         var existPermission = await unitOfWork.Permissions
             .SelectAsync(p => p.Method.ToLower().Equals(permission.Method.ToLower()) &&
                               p.Controller.ToLower().Equals(permission.Controller.ToLower()));
@@ -64,6 +70,8 @@ public class PermissionService(IUnitOfWork unitOfWork, IMapper mapper) : IPermis
 
     public async ValueTask<PermissionViewModel> UpdateAsync(long id, PermissionUpdateModel permission)
     {
+        await permissionUpdateModelValidator.ValidateOrPanicAsync(permission);
+
         var existPermission = await unitOfWork.Permissions.SelectAsync(p => p.Id == id)
             ?? throw new NotFoundException($"Permission is not found with this id: {id}");
 

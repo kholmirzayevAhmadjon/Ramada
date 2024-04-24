@@ -8,15 +8,20 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Customers;
 
 namespace Ramada.Service.Services.Customers;
 
 public class CustomerService(IUnitOfWork unitOfWork,
                              IUserService userService,
-                             IMapper mapper) : ICustomerService
+                             IMapper mapper,
+                             CustomerCreateModelValidator customerCreateModelValidator,
+                             CustomerUpdateModelValidator customerUpdateModelValidator) : ICustomerService
 {
     public async ValueTask<CustomerViewModel> CreateAsync(CustomerCreateModel customer)
     {
+        await customerCreateModelValidator.ValidateOrPanicAsync(customer);
+
         var user = await userService.GetByIdAsync(customer.UserId);
 
         var mappedCustomer = mapper.Map<Customer>(customer);
@@ -69,6 +74,8 @@ public class CustomerService(IUnitOfWork unitOfWork,
 
     public async ValueTask<CustomerViewModel> UpdateAsync(long id, CustomerUpdateModel customer)
     {
+        await customerUpdateModelValidator.ValidateOrPanicAsync(customer);
+
         var existCustomer = await unitOfWork.Customers.SelectAsync(c => c.Id == id && !c.IsDeleted)
             ?? throw new NotFoundException($"Customer is not found with this id: {id}");
         var user = await userService.GetByIdAsync(customer.UserId);

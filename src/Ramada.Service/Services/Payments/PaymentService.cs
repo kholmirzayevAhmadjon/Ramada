@@ -8,13 +8,18 @@ using Ramada.Service.DTOs.Payments;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Payments;
 
 namespace Ramada.Service.Services.Payments;
 
-public class PaymentService(IUnitOfWork unitOfWork, IMapper mapper) : IPaymentService
+public class PaymentService(IUnitOfWork unitOfWork,
+                            IMapper mapper,
+                            PaymentCreateModelValidator paymentCreateModelValidator) : IPaymentService
 {
     public async ValueTask<PaymentViewModel> Create(PaymentCreateModel createModel)
     {
+        await paymentCreateModelValidator.ValidateOrPanicAsync(createModel);
+
         var payment = mapper.Map<Payment>(createModel);
         var booking = await unitOfWork.Bookings.SelectAsync(b => b.Id == createModel.BookingId)
             ?? throw new NotFoundException($"booking with this Id is not found {createModel.BookingId}");

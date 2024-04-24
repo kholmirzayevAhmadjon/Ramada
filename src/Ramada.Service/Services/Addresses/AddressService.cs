@@ -9,12 +9,18 @@ using Ramada.Service.DTOs.Rooms;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Addresses;
 namespace Ramada.Service.Services.Addresses;
 
-public class AddressService(IMapper mapper, IUnitOfWork unitOfWork) : IAddressService
+public class AddressService(IMapper mapper,
+                            IUnitOfWork unitOfWork,
+                            AddressCreateModelValidator addressCreateModelValidator,
+                            AddressUpdateModelValidator addressUpdateModelValidator) : IAddressService
 {
     public async ValueTask<AddressViewModel> CreateAsync(AddressCreateModel addressCreateModel)
     {
+        await addressCreateModelValidator.ValidateOrPanicAsync(addressCreateModel);
+
         var address = mapper.Map<Address>(addressCreateModel);
         address.CreatedByUserId = HttpContextHelper.UserId;
         var existAddress = await unitOfWork.Addresses.InsertAsync(address);
@@ -25,6 +31,8 @@ public class AddressService(IMapper mapper, IUnitOfWork unitOfWork) : IAddressSe
 
     public async ValueTask<AddressViewModel> UpdateAsync(long id, AddressUpdateModel addressUpdateModel)
     {
+        await addressUpdateModelValidator.ValidateOrPanicAsync(addressUpdateModel);
+
         var existAddress = await unitOfWork.Addresses.SelectAsync(address => address.Id == id)
              ?? throw new NotFoundException($"Address is not found with this id: {id}");
 
