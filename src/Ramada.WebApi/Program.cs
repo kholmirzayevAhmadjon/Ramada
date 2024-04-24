@@ -28,6 +28,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddAuthorization();
 builder.Services.AddJwtService(builder.Configuration);
+builder.Services.AddCustomValidators();
 builder.Services.AddCustomServices();
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
