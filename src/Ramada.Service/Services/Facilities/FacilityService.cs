@@ -6,13 +6,19 @@ using Ramada.Service.DTOs.Facilities;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Facilities;
 
 namespace Ramada.Service.Services.Facilities;
 
-public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacilityService
+public class FacilityService(IUnitOfWork unitOfWork,
+                             IMapper mapper,
+                             FacilityCreateModelValidator facilityCreateModelValidator,
+                             FacilityUpdateModelValidator facilityUpdateModelValidator) : IFacilityService
 {
     public async ValueTask<FacilityViewModel> CreateAsync(FacilityCreateModel model)
     {
+        await facilityCreateModelValidator.ValidateOrPanicAsync(model);
+
         var facility = await unitOfWork.Facilities.SelectAsync(expression: facility => facility.Name.ToLower() == model.Name.ToLower());
         if (facility is not null)
             throw new AlreadyExistException("This facility already exists");
@@ -54,6 +60,8 @@ public class FacilityService(IUnitOfWork unitOfWork, IMapper mapper) : IFacility
 
     public async ValueTask<FacilityViewModel> UpdateAsync(long id, FacilityUpdateModel model)
     {
+        await facilityUpdateModelValidator.ValidateOrPanicAsync(model);
+
         var existFacility = await unitOfWork.Facilities.SelectAsync(facility => facility.Id == id)
             ?? throw new NotFoundException($"This facility not found ID = {id}");
 
