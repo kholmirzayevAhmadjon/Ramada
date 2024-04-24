@@ -24,6 +24,11 @@ namespace Ramada.WebApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static void AddCustomValidators(this IServiceCollection services)
+    {
+
+    }
+
     public static void AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
