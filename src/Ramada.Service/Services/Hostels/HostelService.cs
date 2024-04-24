@@ -9,16 +9,21 @@ using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Addresses;
 using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Hostels;
 
 namespace Ramada.Service.Services.Hostels;
 
 public class HostelService(IUnitOfWork unitOfWork,
                            IUserService userService,
                            IAddressService addressService,
-                           IMapper mapper) : IHostelService
+                           IMapper mapper,
+                           HostelCreateModelValidator hostelCreateModelValidator,
+                           HostelUpdateModelValidator hostelUpdateModelValidator) : IHostelService
 {
     public async ValueTask<HostelViewModel> CreateAsync(HostelCreateModel hostel)
     {
+        await hostelCreateModelValidator.ValidateOrPanicAsync(hostel);
+
         var user = await userService.GetByIdAsync(hostel.UserId);
         var address = await addressService.GetByIdAsync(hostel.AddressId);
 
@@ -71,6 +76,8 @@ public class HostelService(IUnitOfWork unitOfWork,
 
     public async ValueTask<HostelViewModel> UpdateAsync(long id, HostelUpdateModel hostel)
     {
+        await hostelUpdateModelValidator.ValidateOrPanicAsync(hostel);
+
         var existHostel = await unitOfWork.Hostels.SelectAsync(h => h.Id == id && !h.IsDeleted)
             ?? throw new NotFoundException($"Hostel is not found with this id: {id}");
         var user = await userService.GetByIdAsync(hostel.UserId);
