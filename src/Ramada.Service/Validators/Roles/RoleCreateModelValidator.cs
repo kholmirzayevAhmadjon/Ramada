@@ -3,9 +3,9 @@ using Ramada.Service.DTOs.Roles;
 
 namespace Ramada.Service.Validators.Roles;
 
-public class RolCreateModelValidator : AbstractValidator<RoleCreateModel>
+public class RoleCreateModelValidator : AbstractValidator<RoleCreateModel>
 {
-    public RolCreateModelValidator()
+    public RoleCreateModelValidator()
     {
         RuleFor(role => role.Name)
             .NotNull()
