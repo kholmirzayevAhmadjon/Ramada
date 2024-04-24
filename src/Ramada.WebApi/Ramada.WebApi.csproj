@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Ramada.Service\Ramada.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
