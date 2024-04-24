@@ -53,4 +53,15 @@ public class BookingsController(IBookingService service) : BaseController
            Data = await service.UpdateAsync(id, model) 
         });
     }
+
+    [HttpDelete("{id:long}")]
+    public async ValueTask<IActionResult> DeleteAsync(long id)
+    {
+        return Ok(new Response
+        {
+            StatusCode = 200,
+            Message = "Success",
+            Data = await service.DeleteAsync(id)
+        });
+    }
 }
