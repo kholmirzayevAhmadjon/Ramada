@@ -1,13 +1,43 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Ramada.DataAccess.Repositories;
+using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Service.Options;
+using Ramada.Service.Services.Addresses;
+using Ramada.Service.Services.Assets;
+using Ramada.Service.Services.Auths;
+using Ramada.Service.Services.Bookings;
+using Ramada.Service.Services.Customers;
+using Ramada.Service.Services.Facilities;
+using Ramada.Service.Services.Hostels;
+using Ramada.Service.Services.Payments;
+using Ramada.Service.Services.RoleService;
+using Ramada.Service.Services.RoomFacilities;
+using Ramada.Service.Services.Rooms;
+using Ramada.Service.Services.Users;
 using System.Text;
 
 namespace Ramada.WebApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static void AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IHostelService, HostelService>();
+        services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IFacilityService, FacilityService>();
+        services.AddScoped<IRoomFacilityService, RoomFacilityService>();
+        services.AddScoped<IAddressService, AddressService>();
+    }
     public static void AddJwtService(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtOption>(configuration.GetSection("JWT"));

@@ -38,21 +38,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddAuthorization();
 builder.Services.AddJwtService(builder.Configuration);
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IHostelService, HostelService>();
-builder.Services.AddScoped<IRoomService, RoomService>();
-builder.Services.AddScoped<IAssetService, AssetService>();
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IFacilityService, FacilityService>();
-builder.Services.AddScoped<IRoomFacilityService, RoomFacilityService>();
-builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddServices();
 
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
