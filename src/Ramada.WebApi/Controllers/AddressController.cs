@@ -42,4 +42,27 @@ public class AddressController(IAddressService addressService) : BaseController
             Data = await addressService.CreateAsync(addressCreateModel)
         });
     }
+
+    [HttpPut("{id}")]
+    public async ValueTask<IActionResult> PutAsync([FromRoute] long id,
+                                              [FromBody] AddressUpdateModel addressUpdateModel)
+    {
+        return Ok(new Response()
+        {
+            Message = "Ok",
+            StatusCode = 200,
+            Data = await addressService.UpdateAsync(id, addressUpdateModel)
+        });
+    }
+
+  [HttpDelete("{id}")]
+    public async ValueTask<IActionResult> DeleteAsync([FromRoute] long id)
+    {
+        return Ok(new Response()
+        {
+            Message = "Ok",
+            StatusCode = 200,
+            Data = await addressService.DeleteAsync(id)
+        });
+    }
 }
