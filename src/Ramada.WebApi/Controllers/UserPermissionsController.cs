@@ -1,21 +1,22 @@
-﻿using Ramada.Service.Configurations;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Ramada.Service.Configurations;
+using Ramada.Service.DTOs.UserPermissions;
 using Ramada.Service.Services.UserPermissions;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class UserPermissionController(IUserPermissionService userPermissionService) : BaseController
+public class UserPermissionsController(IUserPermissionService userPermissionService) : BaseController
 {
     [HttpGet]
-    public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
-                                              [FromQuery] Filter filter,
-                                              [FromQuery] string search)
+    public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await userPermissionService.GetAllAsync(@params, filter, search)
+            Data = await userPermissionService.GetAllAsync(@params)
         });
     }
 
@@ -26,19 +27,19 @@ public class UserPermissionController(IUserPermissionService userPermissionServi
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await userPermissionService.GetByIdAsync(id)
+            Data = await userPermissionService.GetAsync(id)
         });
     }
 
     [AllowAnonymous]
     [HttpPost]
-    public async ValueTask<IActionResult> PostAsync([FromBody] UserPermissionController user)
+    public async ValueTask<IActionResult> PostAsync([FromBody] UserPermissionCreateModel userPermission)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await userPermissionService.CreateAsync(user)
+            Data = await userPermissionService.CreateAsync(userPermission)
         });
     }
 

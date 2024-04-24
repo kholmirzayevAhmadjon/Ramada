@@ -1,9 +1,10 @@
-﻿using Ramada.Service.Exceptions;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Ramada.Service.Exceptions;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Middlewares;
 
-public class ExceptionHandlerMiddleWare(RequestDelegate next)
+public class ExceptionHandlerMiddleWare(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -51,6 +52,7 @@ public class ExceptionHandlerMiddleWare(RequestDelegate next)
         catch (Exception ex)
         {
             context.Response.StatusCode = 500;
+            logger.LogError(ex.ToString());
             await context.Response.WriteAsJsonAsync(new Response()
             {
                 Message = ex.Message,

@@ -11,5 +11,4 @@ public interface IRoomAssetService
     ValueTask<IEnumerable<RoomAssetViewModel>> GetAllAsync(PaginationParams @params,
                                                             Filter filter,
                                                             string search = null);
-
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ramada.Domain.Entities.Users;
 using Ramada.Service.Configurations;
-using Ramada.Service.DTOs.Permissions;
 using Ramada.Service.Services.Permissions;
 using Ramada.WebApi.Models;
 

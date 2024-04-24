@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Users;
 using Ramada.Service.Configurations;
@@ -44,7 +45,7 @@ public class UserPermissionService(IMapper mapper,
         var userPermission = await unitOfWork.UsersPermissions.SelectAsync(p => p.Id == id)
              ?? throw new NotFoundException($"Permission with this Id is not found {id}");
 
-        await unitOfWork.UsersPermissions.DeleteAsync(userPermission);
+        await unitOfWork.UsersPermissions.DropAsync(userPermission);
         await unitOfWork.SaveAsync();
 
         return true;
@@ -52,7 +53,7 @@ public class UserPermissionService(IMapper mapper,
 
     public async ValueTask<UserPermissionViewModel> GetAsync(long id)
     {
-        var userPermission = await unitOfWork.UsersPermissions.SelectAsync(p => p.Id == id)
+        var userPermission = await unitOfWork.UsersPermissions.SelectAsync(p => p.Id == id, ["User", "Permission"])
              ?? throw new NotFoundException($"Permission with this Id is not found {id}");
 
         var mappedUserPermission = mapper.Map<UserPermissionViewModel>(userPermission);
@@ -66,9 +67,9 @@ public class UserPermissionService(IMapper mapper,
     public async ValueTask<IEnumerable<UserPermissionViewModel>> GetAllAsync(PaginationParams @params)
     {
         var userPermission = unitOfWork.UsersPermissions.SelectAsQueryable(expression:
-            u=>!u.IsDeleted, isTracked: false);
+            u => !u.IsDeleted, includes: ["User", "Permission"], isTracked: false);
 
-        var res = userPermission.ToPaginate(@params);
+        var res = await userPermission.ToPaginate(@params).ToListAsync();
 
         var result = mapper.Map<IEnumerable<UserPermissionViewModel>>(res);
 
