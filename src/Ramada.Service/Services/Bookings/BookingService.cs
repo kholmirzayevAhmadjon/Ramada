@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Domain.Entities.Bookings;
+using Ramada.Domain.Enums;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Bookings;
 using Ramada.Service.DTOs.Customers;
@@ -28,10 +29,10 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
         var existRoom = await unitOfWork.Rooms.SelectAsync(r => r.Id == bookingCreateModel.RoomId)
             ?? throw new NotFoundException($"Room with this Id is not found {bookingCreateModel.RoomId}");
 
-        var IsSuitable = existRoom.MaxPeopleSize >= bookingCreateModel.NumberOfPeople && existRoom.Status == 0;
+        var IsSuitable = existRoom.MaxPeopleSize >= bookingCreateModel.NumberOfPeople && existRoom.Status == RoomStatus.Empty;
 
         if (!IsSuitable)
-            throw new ArgumentException("Room is busy or too small for you");
+            throw new ArgumentIsNotValidException("Room is busy or too small for you");
         booking.Room= existRoom;
         booking.Customer = existCustomer;
 

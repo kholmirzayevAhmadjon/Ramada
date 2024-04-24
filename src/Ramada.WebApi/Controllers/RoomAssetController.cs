@@ -1,11 +1,12 @@
-﻿using Ramada.Service.Configurations;
+﻿using Microsoft.AspNetCore.Mvc;
+using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.RoomAssets;
 using Ramada.Service.Services.RoomAssets;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class RoomAssetController(IRoomAssetService roomAssetService) : BaseController
+public class RoomAssetsController(IRoomAssetService roomAssetService) : BaseController
 {
     [HttpGet]
     public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,

@@ -9,15 +9,13 @@ namespace Ramada.WebApi.Controllers;
 public class BookingsController(IBookingService service) : BaseController
 {
     [HttpGet]
-    public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
-                                          [FromQuery] Filter filter,
-                                          [FromQuery] string search)
+    public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params)
     {
         return Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await service.GetAllAsync(@params, filter, search)
+            Data = await service.GetAllAsync(@params, null)
         });
     }
 
