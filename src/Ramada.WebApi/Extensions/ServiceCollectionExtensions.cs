@@ -20,7 +20,13 @@ using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Rooms;
 using Ramada.Service.Services.UserPermissions;
 using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Addresses;
+using Ramada.Service.Validators.Bookings;
+using Ramada.Service.Validators.Customers;
+using Ramada.Service.Validators.Facilities;
 using Ramada.Service.Validators.Hostels;
+using Ramada.Service.Validators.Payments;
+using Ramada.Service.Validators.Permissions;
 using Ramada.Service.Validators.Roles;
 using Ramada.Service.Validators.Users;
 using System.Text;
@@ -33,10 +39,29 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<UserCreateModelValidator>();
         services.AddTransient<UserUpdateModelValidator>();
+        
         services.AddTransient<RoleCreateModelValidator>();
         services.AddTransient<RoleUpdateModelValidator>();
+       
         services.AddTransient<HostelCreateModelValidator>();
         services.AddTransient<HostelUpdateModelValidator>();
+       
+        services.AddTransient<AddressCreateModelValidator>();
+        services.AddTransient<AddressUpdateModelValidator>();
+       
+        services.AddTransient<BookingCreateModelValidator>();
+        services.AddTransient<BookingUpdateModelValidator>();
+        
+        services.AddTransient<CustomerCreateModelValidator>();
+        services.AddTransient<CustomerUpdateModelValidator>();
+
+        services.AddTransient<FacilityCreateModelValidator>();
+        services.AddTransient<FacilityUpdateModelValidator>();
+
+        services.AddTransient<PaymentCreateModelValidator>();
+
+        services.AddTransient<PermissionCreateModelValidator>();
+        services.AddTransient<PermissionUpdateModelValidator>();
     }
 
     public static void AddCustomServices(this IServiceCollection services)
