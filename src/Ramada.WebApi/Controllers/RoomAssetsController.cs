@@ -1,22 +1,22 @@
-﻿using Ramada.Service.Configurations;
+﻿using Microsoft.AspNetCore.Mvc;
+using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.RoomAssets;
 using Ramada.Service.Services.RoomAssets;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class RoomAssetController(IRoomAssetService roomAssetService) : BaseController
+public class RoomAssetsController(IRoomAssetService roomAssetService) : BaseController
 {
     [HttpGet]
     public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,
-                                          [FromQuery] Filter filter,
-                                          [FromQuery] string search)
+                                          [FromQuery] Filter filter)
     {
         return Ok(new Response()
         {
             Message = "Ok",
             StatusCode = 200,
-            Data = await roomAssetService.GetAllAsync(@params, filter, search)
+            Data = await roomAssetService.GetAllAsync(@params, filter)
         });
     }
 
