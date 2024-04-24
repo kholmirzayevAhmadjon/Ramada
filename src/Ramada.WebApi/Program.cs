@@ -1,20 +1,22 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Ramada.DataAccess.Contexts;
 using Ramada.DataAccess.UnitOfWorks;
+using Ramada.Service.DTOs.Users;
 using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
-using Ramada.Service.Options;
-using Ramada.WebApi.Middlewares;
-using Ramada.Service.Services.Auths;
-using Ramada.Service.Services.RoleService;
-using Ramada.Service.Services.Users;
-using Ramada.WebApi.Extensions;
-using Ramada.Service.Services.Facilities;
-using Ramada.Service.Services.Rooms;
-using Newtonsoft.Json;
-using Ramada.Service.Services.Hostels;
 using Ramada.Service.Services.Assets;
+using Ramada.Service.Services.Auths;
+using Ramada.Service.Services.Facilities;
+using Ramada.Service.Services.Hostels;
+using Ramada.Service.Services.RoleService;
 using Ramada.Service.Services.RoomFacilities;
+using Ramada.Service.Services.Rooms;
+using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Users;
+using Ramada.WebApi.Extensions;
+using Ramada.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,8 @@ builder.Services.AddScoped<IHostelService, HostelService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IRoomFacilityService, RoomFacilityService>();
+builder.Services.AddScoped<IValidator<UserCreateModel>, UserCreateModelValidator>();
+builder.Services.AddScoped<IValidator<UserUpdateModel>, UserUpdateModelValidator>();
 
 EnvironmentHelper.WebRootPath = builder.Environment.WebRootPath;
 
