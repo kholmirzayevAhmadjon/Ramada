@@ -28,6 +28,7 @@ using Ramada.Service.Validators.Hostels;
 using Ramada.Service.Validators.Payments;
 using Ramada.Service.Validators.Permissions;
 using Ramada.Service.Validators.Roles;
+using Ramada.Service.Validators.RoomAssets;
 using Ramada.Service.Validators.Users;
 using System.Text;
 
@@ -61,6 +62,10 @@ public static class ServiceCollectionExtensions
         services.AddTransient<PaymentCreateModelValidator>();
 
         services.AddTransient<PermissionCreateModelValidator>();
+        services.AddTransient<PermissionUpdateModelValidator>();
+
+        services.AddTransient<RoomAssetCreateModelValidator>();
+
         services.AddTransient<PermissionUpdateModelValidator>();
     }
 
