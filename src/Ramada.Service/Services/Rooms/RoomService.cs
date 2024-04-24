@@ -7,13 +7,20 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Hostels;
+using Ramada.Service.Validators.Rooms;
 
 namespace Ramada.Service.Services.Rooms;
 
-public class RoomService(IUnitOfWork unitOfWork, IMapper mapper, IHostelService hostelService) : IRoomService
+public class RoomService(IUnitOfWork unitOfWork,
+                         IMapper mapper,
+                         IHostelService hostelService,
+                         RoomCreateModelValidator roomCreateModelValidator,
+                         RoomUpdateModelValidator roomUpdateModelValidator) : IRoomService
 {
     public async ValueTask<RoomViewModel> CreateAsync(RoomCreateModel model)
     {
+        await roomCreateModelValidator.ValidateOrPanicAsync(model);
+
         var hostel = await hostelService.GetByIdAsync(model.HostelId);
         var existRoom = await unitOfWork.Rooms.InsertAsync(mapper.Map<Room>(model));
         await unitOfWork.SaveAsync();
@@ -54,6 +61,8 @@ public class RoomService(IUnitOfWork unitOfWork, IMapper mapper, IHostelService 
 
     public async ValueTask<RoomViewModel> UpdateAsync(long id, RoomUpdateModel model)
     {
+        await roomUpdateModelValidator.ValidateOrPanicAsync(model);
+
         var existRoom = await unitOfWork.Rooms.SelectAsync(room => room.Id == id)
             ?? throw new NotFoundException($"Room is not found with this id: {id}");
         var hostel = await hostelService.GetByIdAsync(model.HostelId);

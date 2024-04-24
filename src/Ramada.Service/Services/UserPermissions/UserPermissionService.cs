@@ -6,13 +6,18 @@ using Ramada.Service.DTOs.UserPermissions;
 using Ramada.Service.DTOs.Users;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
+using Ramada.Service.Validators.UserPermissions;
 
 namespace Ramada.Service.Services.UserPermissions;
 
-public class UserPermissionService(IMapper mapper, IUnitOfWork unitOfWork) : IUserPermissionService
+public class UserPermissionService(IMapper mapper,
+                                   IUnitOfWork unitOfWork,
+                                   UserPermissionCreateModelValidator userPermissionCreateModelValidator) : IUserPermissionService
 {
     public async ValueTask<UserPermissionViewModel> CreateAsync(UserPermissionCreateModel userPermissionCreate)
     {
+        await userPermissionCreateModelValidator.ValidateOrPanicAsync(userPermissionCreate);
+
         var permission = mapper.Map<UserPermissionn>(userPermissionCreate);
 
         var existUser = await unitOfWork.Users.SelectAsync(u => u.Id == userPermissionCreate.UserId)
