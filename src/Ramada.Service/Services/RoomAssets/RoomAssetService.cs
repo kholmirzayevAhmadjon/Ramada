@@ -14,24 +14,15 @@ using Ramada.Service.Services.Rooms;
 namespace Ramada.Service.Services.RoomAssets;
 
 public class RoomAssetService(IMapper mapper,
-                              IUnitOfWork unitOfWork, 
+                              IUnitOfWork unitOfWork,
+                              IAssetService assetService,
+                              IRoomService roomService,
                               RoomAssetCreateModelValidator roomAssetCreateModelValidator) : IRoomAssetService
 {
     public async ValueTask<RoomAssetViewModel> CreateAsync(RoomAssetCreateModel model)
     {
         await roomAssetCreateModelValidator.ValidateOrPanicAsync(model);
 
-        var room = await unitOfWork.Rooms.SelectAsync(room => room.Id == model.RoomId)
-            ?? throw new NotFoundException($"Room is not found with this id: {model.RoomId}");
-
-        var asset = await unitOfWork.Assets.SelectAsync(asset => asset.Id == model.AssetId)
-            ?? throw new NotFoundException($"Asset is not found with this id: {model.AssetId}");
-                              IUnitOfWork unitOfWork,
-                              IRoomService roomService,
-                              IAssetService assetService) : IRoomAssetService
-{
-    public async ValueTask<RoomAssetViewModel> CreateAsync(RoomAssetCreateModel model)
-    {
         var room = await roomService.GetByIdAsync(model.RoomId);
         var asset = await assetService.GetByIdAsync(model.AssetId);
 
