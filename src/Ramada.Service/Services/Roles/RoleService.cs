@@ -6,13 +6,19 @@ using Ramada.Service.DTOs.Roles;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Roles;
 
 namespace Ramada.Service.Services.Roles;
 
-public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
+public class RoleService(IUnitOfWork unitOfWork,
+                         IMapper mapper,
+                         RoleCreateModelValidator roleCreateModelValidator,
+                         RoleUpdateModelValidator roleUpdateModelValidator) : IRoleService
 {
     public async ValueTask<RoleViewModel> CreateAsync(RoleCreateModel model)
     {
+        await roleCreateModelValidator.ValidateOrPanicAsync(model);
+
         var role = await unitOfWork.Roles.SelectAsync(r => r.Name.ToLower() == model.Name.ToLower());
         if (role is not null)
         {
@@ -44,6 +50,8 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IRoleService
 
     public async ValueTask<RoleViewModel> UpdateAsync(long id, RoleUpdateeModel model)
     {
+        await roleUpdateModelValidator.ValidateOrPanicAsync(model);
+
         var role = await unitOfWork.Roles.SelectAsync(expression: role => role.Id == id && !role.IsDeleted)
             ?? throw new NotFoundException("This role is not found");
 

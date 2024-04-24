@@ -20,6 +20,8 @@ using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Rooms;
 using Ramada.Service.Services.UserPermissions;
 using Ramada.Service.Services.Users;
+using Ramada.Service.Validators.Hostels;
+using Ramada.Service.Validators.Roles;
 using Ramada.Service.Validators.Users;
 using System.Text;
 
@@ -31,6 +33,10 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<UserCreateModelValidator>();
         services.AddTransient<UserUpdateModelValidator>();
+        services.AddTransient<RoleCreateModelValidator>();
+        services.AddTransient<RoleUpdateModelValidator>();
+        services.AddTransient<HostelCreateModelValidator>();
+        services.AddTransient<HostelUpdateModelValidator>();
     }
 
     public static void AddCustomServices(this IServiceCollection services)
