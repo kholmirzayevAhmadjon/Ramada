@@ -9,13 +9,19 @@ using Ramada.Service.DTOs.Rooms;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
+using Ramada.Service.Validators.Bookings;
 
 namespace Ramada.Service.Services.Bookings;
 
-public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingService
+public class BookingService(IUnitOfWork unitOfWork,
+                            IMapper mapper,
+                            BookingCreateModelValidator bookingCreateModelValidator,
+                            BookingUpdateModelValidator bookingUpdateModelValidator) : IBookingService
 {
     public async ValueTask<BookingViewModel> CreateAsync(BookingCreateModel bookingCreateModel)
     {
+        await bookingCreateModelValidator.ValidateOrPanicAsync(bookingCreateModel);
+
         var booking = mapper.Map<Booking>(bookingCreateModel);
         booking.Status = Domain.Enums.BookingStatus.Incompleted;
         //var customerId = HttpContextHelper.UserId;
@@ -95,6 +101,8 @@ public class BookingService(IUnitOfWork unitOfWork, IMapper mapper) : IBookingSe
 
     public async ValueTask<BookingViewModel> UpdateAsync(long id, BookingUpdateModel bookingUpdateModel)
     {
+        await bookingUpdateModelValidator.ValidateOrPanicAsync(bookingUpdateModel);
+
         var existBooking = await unitOfWork.Bookings.SelectAsync(b => b.Id == id)
             ?? throw new NotFoundException($"Booking with this Id is not found {id}");
 
