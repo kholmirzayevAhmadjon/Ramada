@@ -10,5 +10,5 @@ public interface IRoomFacilityService
     ValueTask<RoomFacilityViewModel> UpdateAsync(long id, RoomFacilityUpdateModel model);
     ValueTask<bool> DeleteAsync(long id);
     ValueTask<RoomFacilityViewModel> GetByIdAsync(long id);
-    ValueTask<IEnumerable<RoomFacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null);
+    ValueTask<IEnumerable<RoomFacilityViewModel>> GetAllAsync(PaginationParams @params, Filter filter);
 }

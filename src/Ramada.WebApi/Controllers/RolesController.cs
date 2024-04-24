@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ramada.Service.Configurations;
 using Ramada.Service.DTOs.Roles;
-using Ramada.Service.DTOs.Rooms;
-using Ramada.Service.Services.RoleService;
-using Ramada.Service.Services.Rooms;
+using Ramada.Service.Services.Roles;
 using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;

@@ -6,7 +6,7 @@ using Ramada.WebApi.Models;
 
 namespace Ramada.WebApi.Controllers;
 
-public class AddressController(IAddressService addressService) : BaseController
+public class AddressesController(IAddressService addressService) : BaseController
 {
     [HttpGet]
     public async ValueTask<IActionResult> GetAsync([FromQuery] PaginationParams @params,

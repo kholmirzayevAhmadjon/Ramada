@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ramada.Service.Services.UserPermission;
+namespace Ramada.Service.Services.UserPermissions;
 
 public interface IUserPermissionService
 {

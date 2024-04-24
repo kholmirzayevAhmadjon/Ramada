@@ -9,7 +9,7 @@ using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Auths;
-using Ramada.Service.Services.RoleService;
+using Ramada.Service.Services.Roles;
 
 namespace Ramada.Service.Services.Users;
 

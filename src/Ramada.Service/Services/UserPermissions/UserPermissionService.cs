@@ -7,7 +7,7 @@ using Ramada.Service.DTOs.Users;
 using Ramada.Service.Exceptions;
 using Ramada.Service.Extensions;
 
-namespace Ramada.Service.Services.UserPermission;
+namespace Ramada.Service.Services.UserPermissions;
 
 public class UserPermissionService(IMapper mapper, IUnitOfWork unitOfWork) : IUserPermissionService
 {
