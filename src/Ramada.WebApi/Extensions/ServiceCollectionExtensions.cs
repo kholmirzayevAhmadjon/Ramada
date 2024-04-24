@@ -12,9 +12,12 @@ using Ramada.Service.Services.Customers;
 using Ramada.Service.Services.Facilities;
 using Ramada.Service.Services.Hostels;
 using Ramada.Service.Services.Payments;
+using Ramada.Service.Services.Permissions;
 using Ramada.Service.Services.RoleService;
+using Ramada.Service.Services.RoomAssets;
 using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Rooms;
+using Ramada.Service.Services.UserPermission;
 using Ramada.Service.Services.Users;
 using System.Text;
 
@@ -28,16 +31,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IHostelService, HostelService>();
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IHostelService, HostelService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IPaymentService, PaymentService>();
-        services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<IFacilityService, FacilityService>();
-        services.AddScoped<IRoomFacilityService, RoomFacilityService>();
         services.AddScoped<IAddressService, AddressService>();
+        services.AddScoped<IFacilityService, FacilityService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IRoomAssetService, RoomAssetService>();
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IRoomFacilityService, RoomFacilityService>();
+        services.AddScoped<IUserPermissionService, UserPermissionService>();
     }
+
     public static void AddJwtService(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtOption>(configuration.GetSection("JWT"));

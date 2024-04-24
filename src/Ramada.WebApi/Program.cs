@@ -1,24 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Ramada.DataAccess.Contexts;
-using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Service.Helpers;
 using Ramada.Service.Mappers;
-using Ramada.Service.Options;
-using Ramada.WebApi.Middlewares;
-using Ramada.Service.Services.Auths;
-using Ramada.Service.Services.RoleService;
-using Ramada.Service.Services.Users;
 using Ramada.WebApi.Extensions;
-using Ramada.Service.Services.Facilities;
-using Ramada.Service.Services.Rooms;
-using Newtonsoft.Json;
-using Ramada.Service.Services.Hostels;
-using Ramada.Service.Services.Assets;
-using Ramada.Service.Services.RoomFacilities;
-using Ramada.Service.Services.Bookings;
-using Ramada.Service.Services.Customers;
-using Ramada.Service.Services.Payments;
-using Ramada.Service.Services.Addresses;
+using Ramada.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
