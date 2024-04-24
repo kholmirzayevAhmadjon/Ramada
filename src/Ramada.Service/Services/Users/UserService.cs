@@ -10,16 +10,22 @@ using Ramada.Service.Extensions;
 using Ramada.Service.Helpers;
 using Ramada.Service.Services.Auths;
 using Ramada.Service.Services.Roles;
+using Ramada.Service.Validators.UserPermissions;
+using Ramada.Service.Validators.Users;
 
 namespace Ramada.Service.Services.Users;
 
 public class UserService(IUnitOfWork unitOfWork,
                          IAuthService authService,
                          IRoleService roleService,   
-                         IMapper mapper) : IUserService
+                         IMapper mapper,
+                         UserCreateModelValidator userCreateModelValidator,
+                         UserUpdateModelValidator userUpdateModelValidator): IUserService
 {
     public async ValueTask<UserViewModel> CreateAsync(UserCreateModel user)
     {
+        await userCreateModelValidator.ValidateOrPanicAsync(user);
+
         var existUser = await unitOfWork.Users.SelectAsync(u => 
             !u.IsDeleted
             && (u.Email.Equals(user.Email)
@@ -98,6 +104,8 @@ public class UserService(IUnitOfWork unitOfWork,
 
     public async ValueTask<UserViewModel> UpdateAsync(long id, UserUpdateModel user)
     {
+        await userUpdateModelValidator.ValidateOrPanicAsync(user);
+
         var existUser = await unitOfWork.Users.SelectAsync(u => u.Id == id && !u.IsDeleted)
             ?? throw new NotFoundException($"User is not found with this id: {id}");
         var role = await roleService.GetByIdAsync(user.RoleId);
