@@ -7,7 +7,7 @@ public interface IBookingService
 {
     ValueTask<BookingViewModel> CreateAsync(BookingCreateModel bookingCreateModel);
     ValueTask<BookingViewModel> GetAsync(long id);
-    ValueTask<IEnumerable<BookingViewModel>> GetAll(PaginationParams @params, Filter filter, string search = null);
+    ValueTask<IEnumerable<BookingViewModel>> GetAllAsync(PaginationParams @params, Filter filter, string search = null);
     ValueTask<BookingViewModel> UpdateAsync(long id, BookingUpdateModel bookingUpdateModel);
     ValueTask<bool> DeleteAsync(long id);
     ValueTask<bool> FinishBooking(long id);
