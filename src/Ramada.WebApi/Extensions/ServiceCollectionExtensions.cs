@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Ramada.DataAccess.Repositories;
 using Ramada.DataAccess.UnitOfWorks;
 using Ramada.Service.Options;
 using Ramada.Service.Services.Addresses;
@@ -13,11 +12,11 @@ using Ramada.Service.Services.Facilities;
 using Ramada.Service.Services.Hostels;
 using Ramada.Service.Services.Payments;
 using Ramada.Service.Services.Permissions;
-using Ramada.Service.Services.RoleService;
+using Ramada.Service.Services.Roles;
 using Ramada.Service.Services.RoomAssets;
 using Ramada.Service.Services.RoomFacilities;
 using Ramada.Service.Services.Rooms;
-using Ramada.Service.Services.UserPermission;
+using Ramada.Service.Services.UserPermissions;
 using Ramada.Service.Services.Users;
 using System.Text;
 
